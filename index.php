@@ -24,30 +24,26 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 // Basic routing
-$module = isset($_GET['module']) ? validateInput($_GET['module']) : 'products';
-$action = isset($_GET['action']) ? validateInput($_GET['action']) : 'list';
+$module = isset($_GET['module']) ? validateInput($_GET['module']) : 'home'; // Default module is now 'home'
+$default_action = ($module === 'home') ? 'index' : 'list'; // Default action for 'home' is 'index', for others 'list'
+$action = isset($_GET['action']) ? validateInput($_GET['action']) : $default_action;
 
 // Define valid modules and actions
-$validModules = ['products', 'orders', 'payments', 'inventory'];
-// Note: Action validation might be better handled within each module,
-// as actions can vary significantly between modules.
-// For now, this basic list is kept as per original structure.
-$validActions = ['list', 'view', 'add', 'edit', 'delete', 'update_cart', 'view_cart', 'checkout', 'process_payment', 'success', 'cancel']; // Added more common actions
+$validModules = ['home', 'products', 'orders', 'payments', 'inventory']; // Added 'home'
+// Note: Action validation might be better handled within each module.
+$validActions = ['index', 'list', 'view', 'add', 'edit', 'delete', 'update_cart', 'view_cart', 'checkout', 'process_payment', 'success', 'cancel'];
 
 // Validate module
 if (!in_array($module, $validModules)) {
-    logError("Invalid module requested: $module. Defaulting to 'products'.");
-    $module = 'products';
+    logError("Invalid module requested: $module. Defaulting to 'home'.");
+    $module = 'home';
+    $action = 'index'; // Reset action for home module
 }
-// Validate action - it might be better to let modules handle their own action validation
-if (!in_array($action, $validActions)) {
-    // If action is not in a generic list, we assume it might be valid for the specific module
-    // or it defaults to 'list'. For now, let's keep the default to 'list' if unsure.
-    // A more robust approach would be for each module to declare its valid actions.
-    // logDebug("Action '$action' not in predefined global list. Module '$module' will handle it or default.");
-    // For now, to maintain original behavior if action is not "known globally":
-    // $action = 'list'; // Or remove this line if modules handle unknown actions gracefully
-}
+// Validate action - (optional, can be handled by module)
+// if (!in_array($action, $validActions)) {
+//     logDebug("Action '$action' not in predefined global list. Module '$module' will handle it or default to its own default.");
+//     // $action = $default_action; // Or let the module handle it.
+// }
 
 
 // Load module
@@ -59,17 +55,17 @@ if (file_exists($modulePath)) {
     // Module file not found
     logError("Module file not found for module: '$module' at path: '$modulePath'");
 
-    if ($module === 'products' && (!isset($_GET['module']) || $_GET['module'] === 'products')) {
-        // If the request was for 'products' (either by default or explicitly)
-        // and its file is missing, this is a critical error. Stop to prevent looping.
-        http_response_code(500); // Internal Server Error
-        die("Critical Error: The main product module is missing or inaccessible. Please contact the site administrator. Path checked: " . htmlspecialchars($modulePath));
+    // If the 'home' module itself is missing (and it was the one attempted to load)
+    if ($module === 'home' && (!isset($_GET['module']) || $_GET['module'] === 'home')) {
+        http_response_code(500);
+        // This is a critical error, so a simple die message is appropriate.
+        // For a more user-friendly page, you could create a static error HTML file.
+        die("Critical Error: The main home page module is missing or inaccessible. Please contact the site administrator. Path checked: " . htmlspecialchars($modulePath));
     } else {
-        // If a different module was requested and not found, try redirecting to the default 'products' module.
-        // This assumes 'products' module should normally exist.
-        $_SESSION['message'] = "The requested section ('" . htmlspecialchars($module) . "') was not found. Displaying products instead.";
+        // If a different, non-critical module was requested and not found, redirect to the home page.
+        $_SESSION['message'] = "The requested section ('" . htmlspecialchars($module) . "') was not found. Displaying the home page instead.";
         $_SESSION['message_type'] = 'warning';
-        header('Location: index.php?module=products');
+        header('Location: index.php'); // Redirects to home (module=home)
         exit;
     }
 }

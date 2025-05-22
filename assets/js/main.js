@@ -40,6 +40,34 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Mobile menu toggle (moved to footer.php for direct script tag)
+
+    // Scroll-triggered animations for the home page
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+
+    if (animatedElements.length > 0) {
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = parseInt(entry.target.dataset.animationDelay || 0, 10);
+                    setTimeout(() => {
+                        entry.target.classList.add('is-visible');
+                        // For elements animated with initial Tailwind classes like opacity-0:
+                        if (entry.target.classList.contains('animate-fade-in-up')) {
+                            // These classes are defined in an inline style block in main.php or in style.css
+                            // The .is-visible class will trigger the transition
+                        }
+                        // Or, if you prefer to remove Tailwind classes:
+                        // entry.target.classList.remove('opacity-0', 'translate-y-10'); // Example
+                    }, delay);
+                    observer.unobserve(entry.target); // Animate only once
+                }
+            });
+        }, { threshold: 0.1 }); // Trigger when 10% of the element is visible
+
+        animatedElements.forEach(el => {
+            observer.observe(el);
+        });
+    }
 });
 
 // Update cart item quantity

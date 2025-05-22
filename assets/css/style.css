@@ -8,6 +8,7 @@
   1. Custom components defined using @apply (like .btn-malaysia).
   2. Specific rules that are difficult or impossible to achieve with standard Tailwind utilities.
   3. Base styles or overrides if necessary (none carried over from original except comments).
+  4. Custom keyframe animations or more complex transition setups.
 */
 
 /* Malaysian phone number LTR styling (can also be done inline with dir="ltr") */
@@ -45,3 +46,54 @@
   by applying utility classes (padding, margin, colors, borders, hover effects,
   responsive utilities like md:, etc.) directly to the respective elements in HTML.
 */
+
+/* Animations for home page elements if not fully handled by inline styles in main.php */
+/* These are fallback/examples if the inline style block in main.php is moved here */
+/*
+.animate-on-scroll {
+    opacity: 0;
+    transition-property: opacity, transform;
+    transition-timing-function: ease-out;
+    transition-duration: 600ms;
+}
+
+.animate-on-scroll.animate-fade-in-up {
+    transform: translateY(20px);
+}
+.animate-on-scroll.animate-fade-in {
+    
+}
+.animate-on-scroll.animate-slide-in-up {
+    transform: translateY(30px);
+    transition-duration: 500ms;
+}
+
+
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+*/
+
+/* Add a subtle background pattern or texture if desired */
+/*
+body {
+    background-image: url('assets/images/subtle-pattern.png');
+}
+*/
+
+.hero-section {
+    min-height: 70vh;
+    /* Ensure hero section is tall enough */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-card img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.category-card:hover img {
+    transform: scale(1.05);
+}
