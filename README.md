@@ -1,6 +1,6 @@
 # Kedai Runcit Malaysia
 
-Sistem ecommerce guna vanilla PHP + SQLite3 database. UI dia pakai **Tailwind CSS**.
+Sistem ecommerce guna vanilla PHP + SQLite3 database. UI dia pakai **Tailwind CSS** la.
 
 ## Apa yg ada?
 
@@ -17,7 +17,7 @@ Sistem ecommerce guna vanilla PHP + SQLite3 database. UI dia pakai **Tailwind CS
 - PHP 8.0 ke atas
 - SQLite3 extension kena on
 - Browser latest sikit la
-- Laragon (utk develop kat local)
+- XAMPP (utk develop kat local)
 - Internet (sbb nak pakai CDN Tailwind CSS)
 
 ## Untuk Member SDI 🎓
@@ -32,37 +32,19 @@ git config --global user.name "Nama Kau"
 git config --global user.email "email.kau@student.com"
 ```
 
-### Cara Clone Project Ni
+### Cara Setup Project
 
-#### Kalau Guna Laragon
-
-1. Download Laragon kat [laragon.org](https://laragon.org/download/)
-2. Install Laragon (pilih je version Full)
-3. Bukak Laragon, click kanan > Terminal
-4. Pergi ke folder www:
+1. Download XAMPP dengan PHP 8.0 or later: [apachefriends.org](https://www.apachefriends.org/download.html)
+2. Install XAMPP (next-next je, senang)
+3. Start Apache kat XAMPP Control Panel
+4. Bukak Git Bash, pergi ke folder htdocs:
 ```bash
-cd C:\laragon\www
+cd C:\xampp\htdocs
 ```
 5. Clone repo ni:
 ```bash
 git clone https://github.com/AnthonyMuncherz/grocery_store.git grocery_store
 ```
-6. Start Laragon (tekan Start All)
-7. Bukak browser, pergi ke `http://grocery_store.test`
-
-#### Kalau Guna XAMPP
-
-1. Download XAMPP dengan PHP 8.0 or later: [apachefriends.org](https://www.apachefriends.org/download.html)
-2. Install XAMPP (next-next je, senang)
-3. Bukak Git Bash, pergi ke folder htdocs:
-```bash
-cd C:\xampp\htdocs
-```
-4. Clone repo ni:
-```bash
-git clone https://github.com/AnthonyMuncherz/grocery_store.git grocery_store
-```
-5. Start Apache kat XAMPP Control Panel
 6. Bukak browser, pergi ke `http://localhost/grocery_store`
 
 ### Command Git Yang Korang Kena Tau
@@ -95,12 +77,13 @@ git stash pop              # Keluarkan balik changes
 
 1. **Error 404/Page Not Found**
    - Check URL betul ke tak
-   - Pastikan Apache/Laragon dah start
+   - Pastikan Apache dah start kat XAMPP
    - Check folder name sama dgn URL ke tak
+   - Check port 80 free ke tak
 
 2. **Cannot Connect to Database**
    - Check `database/grocery_store.db` ada ke tak
-   - Pastikan SQLite3 extension enabled
+   - Pastikan SQLite3 extension enabled kat php.ini
    - Check permission folder database
 
 3. **Git Error**
@@ -110,37 +93,32 @@ git stash pop              # Keluarkan balik changes
      ```
    - Kalau conflict, jgn panic. Chat group discuss dulu
 
-4. **Localhost Tak Jalan**
-   - XAMPP: Check Apache jalan ke tak
-   - Laragon: Try refresh DNS (click kanan > Tools > Auto Create Virtual Hosts)
-   - Check port 80 free ke tak
+4. **PHP Error**
+   - Bukak XAMPP Control Panel
+   - Click Config kat Apache
+   - Pilih php.ini
+   - Pastikan extension=sqlite3 dah uncomment (takde semicolon ';' kat depan)
+   - Save, then restart Apache
 
 ## Cara pasang
 
-1. Clone repo ni dalam folder www Laragon:
-```bash
-cd C:\laragon\www
-git clone [repository-url] grocery_store
-```
+1. Pastikan XAMPP dah start:
+   - Start Apache kat XAMPP Control Panel
+   - Check takde error kat log
 
-2. Pastikan extension SQLite3 dah on kat PHP config:
-```ini
-extension=sqlite3
-```
-
-3. Tukar permission folder database:
+2. Set permission folder database:
 ```bash
 chmod 755 database/
 chmod 644 database/grocery_store.db
 ```
 
-4. Buat folder utk upload file & logs:
+3. Buat folder utk upload file & logs:
 ```bash
 mkdir -p assets/images/products
 mkdir -p logs
 ```
 
-5. Set permission folder upload & log:
+4. Set permission folder upload & log:
 ```bash
 chmod 755 assets/images/products
 chmod 755 logs
