@@ -243,4 +243,4 @@ Project ni guna MIT License - tengok file LICENSE utk details.
 
 ## Support
 
-Kalau ada masalah, email kat support@grocerystore.my atau buat issue kat repo ni je.
+Kalau ada masalah, whatsapp.. atau buat issue kat repo ni terus.
