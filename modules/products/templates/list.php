@@ -12,12 +12,12 @@
                 <label for="search" class="block text-sm font-medium text-gray-700">Search Products</label>
                 <input type="text" name="search" id="search" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
                     placeholder="e.g., Milo, Kangkung"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-malaysia-blue focus:border-malaysia-blue sm:text-sm">
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-theme-red focus:border-theme-red sm:text-sm">
             </div>
             <div>
                 <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
                 <select name="category" id="category"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-malaysia-blue focus:border-malaysia-blue sm:text-sm">
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-theme-red focus:border-theme-red sm:text-sm">
                     <option value="">All Categories</option>
                     <?php foreach ($categories as $category): ?>
                         <option value="<?= $category['id'] ?>" <?= (isset($_GET['category']) && $_GET['category'] == $category['id']) ? 'selected' : '' ?>>
@@ -28,7 +28,7 @@
             </div>
             <div class="md:col-span-1">
                 <button type="submit"
-                    class="w-full bg-malaysia-blue hover:bg-malaysia-blue-dark text-white font-semibold py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-malaysia-blue">
+                    class="w-full bg-theme-red hover:bg-theme-red-dark text-white font-semibold py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-red">
                     <i class="fas fa-search mr-2"></i>Search
                 </button>
             </div>
@@ -83,18 +83,20 @@
                         <h3 class="product-name text-lg font-semibold text-gray-800 mb-1 truncate"
                             title="<?= htmlspecialchars($product['name']) ?>">
                             <a href="index.php?module=products&action=view&id=<?= $product['id'] ?>"
-                                class="hover:text-malaysia-blue">
+                                class="hover:text-theme-red">
                                 <?= htmlspecialchars($product['name']) ?>
                             </a>
                         </h3>
                         <p class="product-category text-xs text-gray-500 mb-2">
-                            <?= htmlspecialchars($product['category_name']) ?></p>
+                            <?= htmlspecialchars($product['category_name']) ?>
+                        </p>
                         <p class="product-description text-sm text-gray-600 mb-3 h-10 overflow-hidden">
                             <?= nl2br(htmlspecialchars(substr($product['description'] ?? '', 0, 50))) . (strlen($product['description'] ?? '') > 50 ? '...' : '') ?>
                         </p>
                         <div class="mt-auto">
-                            <p class="product-price text-xl font-bold text-malaysia-blue mb-3">
-                                <?= formatProductPrice($product['price']) ?></p>
+                            <p class="product-price text-xl font-bold text-theme-red mb-3">
+                                <?= formatProductPrice($product['price']) ?>
+                            </p>
                             <div class="product-actions space-y-2">
                                 <a href="index.php?module=products&action=view&id=<?= $product['id'] ?>"
                                     class="block w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md text-sm">
@@ -125,7 +127,7 @@
             <?php
             // Previous page
             if ($current_page > 1) {
-                echo '<a href="?module=products&page=' . ($current_page - 1) . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '" 
+                echo '<a href="?module=products&page=' . ($current_page - 1) . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '"
                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Previous</a>';
             } else {
                 echo '<span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-md cursor-not-allowed">Previous</span>';
@@ -137,7 +139,7 @@
             $end = min($total_pages, $current_page + $num_links);
 
             if ($start > 1) {
-                echo '<a href="?module=products&page=1' . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '" 
+                echo '<a href="?module=products&page=1' . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '"
                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">1</a>';
                 if ($start > 2) {
                     echo '<span class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md">...</span>';
@@ -145,8 +147,8 @@
             }
 
             for ($i = $start; $i <= $end; $i++) {
-                $active_class = $current_page == $i ? 'bg-malaysia-blue text-white border-malaysia-blue' : 'text-gray-700 bg-white hover:bg-gray-50';
-                echo '<a href="?module=products&page=' . $i . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '" 
+                $active_class = $current_page == $i ? 'bg-theme-red text-white border-theme-red' : 'text-gray-700 bg-white hover:bg-gray-50';
+                echo '<a href="?module=products&page=' . $i . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '"
                    class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md ' . $active_class . '">' . $i . '</a>';
             }
 
@@ -154,13 +156,13 @@
                 if ($end < $total_pages - 1) {
                     echo '<span class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md">...</span>';
                 }
-                echo '<a href="?module=products&page=' . $total_pages . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '" 
+                echo '<a href="?module=products&page=' . $total_pages . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '"
                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">' . $total_pages . '</a>';
             }
 
             // Next page
             if ($current_page < $total_pages) {
-                echo '<a href="?module=products&page=' . ($current_page + 1) . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '" 
+                echo '<a href="?module=products&page=' . ($current_page + 1) . (isset($_GET['category']) ? '&category=' . htmlspecialchars($_GET['category']) : '') . (isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '') . '"
                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Next</a>';
             } else {
                 echo '<span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-md cursor-not-allowed">Next</span>';

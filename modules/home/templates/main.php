@@ -12,7 +12,7 @@
             <img src="assets/images/hero-bg.jpg" alt="Vibrant Malaysian Market"
                 class="w-full h-full object-cover opacity-50">
             <!-- Fallback if image is missing, or use a solid color -->
-            <!-- <div class="w-full h-full bg-malaysia-blue opacity-80"></div> -->
+            <!-- <div class="w-full h-full bg-theme-red opacity-80"></div> -->
         </div>
         <div class="relative container mx-auto px-6 py-24 md:py-32 lg:py-48 text-center z-10">
             <div class="animate-on-scroll animate-fade-in-up" data-animation-delay="100">
@@ -44,7 +44,7 @@
             <div class="grid md:grid-cols-3 gap-8 lg:gap-12">
                 <div class="feature-item text-center p-6 bg-white rounded-xl shadow-lg animate-on-scroll animate-slide-in-up"
                     data-animation-delay="0">
-                    <div class="text-malaysia-blue text-5xl mb-4">
+                    <div class="text-theme-red text-5xl mb-4">
                         <i class="fas fa-leaf"></i>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-800 mb-2">Fresh & Authentic</h3>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="feature-item text-center p-6 bg-white rounded-xl shadow-lg animate-on-scroll animate-slide-in-up"
                     data-animation-delay="200">
-                    <div class="text-malaysia-blue text-5xl mb-4">
+                    <div class="text-theme-red text-5xl mb-4">
                         <i class="fas fa-shipping-fast"></i>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-800 mb-2">Convenient Shopping</h3>
@@ -64,7 +64,7 @@
                 </div>
                 <div class="feature-item text-center p-6 bg-white rounded-xl shadow-lg animate-on-scroll animate-slide-in-up"
                     data-animation-delay="400">
-                    <div class="text-malaysia-blue text-5xl mb-4">
+                    <div class="text-theme-red text-5xl mb-4">
                         <i class="fas fa-smile-beam"></i>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-800 mb-2">Trusted Service</h3>
@@ -102,13 +102,14 @@
                                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
                         </div>
                         <div class="p-6 flex flex-col flex-grow">
-                            <div class="text-malaysia-blue text-3xl mb-3"><i class="fas <?= $category['icon'] ?>"></i></div>
+                            <div class="text-theme-red text-3xl mb-3"><i class="fas <?= $category['icon'] ?>"></i></div>
                             <h3 class="text-xl font-semibold text-gray-800 mb-2"><?= htmlspecialchars($category['name']) ?>
                             </h3>
                             <p class="text-gray-600 text-sm mb-4 flex-grow">
-                                <?= htmlspecialchars($category['description']) ?></p>
+                                <?= htmlspecialchars($category['description']) ?>
+                            </p>
                             <a href="index.php?module=products&category=<?= $category['id'] ?>"
-                                class="mt-auto inline-block bg-malaysia-blue hover:bg-malaysia-blue-dark text-white font-medium py-2 px-4 rounded-md text-center transition-colors">
+                                class="mt-auto inline-block bg-theme-red hover:bg-theme-red-dark text-white font-medium py-2 px-4 rounded-md text-center transition-colors">
                                 Shop <?= htmlspecialchars($category['name']) ?>
                             </a>
                         </div>
@@ -119,7 +120,7 @@
     </section>
 
     <!-- Call to Action Section -->
-    <section class="cta-section py-16 lg:py-24 bg-malaysia-blue text-white">
+    <section class="cta-section py-16 lg:py-24 bg-theme-red text-white">
         <div class="container mx-auto px-6 text-center animate-on-scroll animate-fade-in">
             <h2 class="text-3xl md:text-4xl font-semibold mb-6">Ready to Taste Malaysia?</h2>
             <p class="text-lg md:text-xl mb-10 max-w-xl mx-auto">

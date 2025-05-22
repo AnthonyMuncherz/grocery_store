@@ -25,11 +25,11 @@ document.addEventListener('DOMContentLoaded', function () {
         method.addEventListener('click', function () {
             // Remove selected classes from all methods
             paymentMethods.forEach(m => {
-                m.classList.remove('border-malaysia-blue', 'bg-blue-50', 'shadow-lg'); // Tailwind selected classes
+                m.classList.remove('border-theme-red', 'bg-theme-red-light', 'shadow-lg'); // Updated Tailwind selected classes
                 m.classList.add('border-gray-300'); // Default border
             });
             // Add selected classes to clicked method
-            this.classList.add('border-malaysia-blue', 'bg-blue-50', 'shadow-lg');
+            this.classList.add('border-theme-red', 'bg-theme-red-light', 'shadow-lg'); // Updated
             this.classList.remove('border-gray-300');
             // Update hidden input
             const selectedPaymentInput = document.getElementById('selected_payment_method');

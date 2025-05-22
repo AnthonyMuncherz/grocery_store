@@ -22,11 +22,13 @@
   Alternatively, apply these utilities directly to the button element in HTML.
 */
 .btn-malaysia {
-    @apply text-white bg-[#0052B4] border border-[#0052B4];
+    @apply text-white bg-theme-red border border-theme-red;
+    /* Updated to theme-red */
 }
 
 .btn-malaysia:hover {
-    @apply bg-[#003D87] border-[#003D87];
+    @apply bg-theme-red-dark border-theme-red-dark;
+    /* Updated to theme-red-dark */
 }
 
 /* 
@@ -38,7 +40,7 @@
 /* 
   Body/footer layout (min-height, flex column, margin-top: auto) is handled
   by applying utilities like min-h-screen, flex, flex-col, and mt-auto directly
-  to the body/wrapper and footer elements in the HTML.
+  to the body/wrapper and footer elements in HTML.
 */
 
 /* 
