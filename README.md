@@ -1,57 +1,152 @@
-# Malaysian Grocery Store
+# Kedai Runcit Malaysia
 
-A vanilla PHP-based e-commerce system for a Malaysian grocery store, built with SQLite3 database. This version is styled with **Tailwind CSS**.
+Sistem ecommerce guna vanilla PHP + SQLite3 database. UI dia pakai **Tailwind CSS**.
 
-## Features
+## Apa yg ada?
 
-- Product browsing and search
-- Shopping cart functionality
-- Order management
-- Malaysian payment processing (dummy implementation)
-- Inventory management
-- Responsive design with Tailwind CSS
-- Malaysian localization (currency, phone numbers, addresses)
+- Boleh browse & search barang
+- Ada shopping cart
+- Boleh track order
+- Payment Malaysia punya (dummy je la)
+- Stock counting
+- Design responsive guna Tailwind
+- Semua ikut style Malaysia (RM, no phone MY, address MY)
 
-## Requirements
+## Apa yg kena ada?
 
-- PHP 8.0 or higher
-- SQLite3 extension enabled
-- Modern web browser
-- Laragon (for local development)
-- Internet connection (for Tailwind CSS CDN)
+- PHP 8.0 ke atas
+- SQLite3 extension kena on
+- Browser latest sikit la
+- Laragon (utk develop kat local)
+- Internet (sbb nak pakai CDN Tailwind CSS)
 
-## Installation
+## Untuk Member SDI 🎓
 
-1. Clone the repository to your Laragon's www directory:
+### Setup Git (Kalau belum install)
+
+1. Download Git kat [git-scm.com](https://git-scm.com/downloads)
+2. Install je mcm biasa, next-next semua ok (default setting dah ok dah)
+3. Lepas install, buka Git Bash, taip command ni untuk setup:
+```bash
+git config --global user.name "Nama Kau"
+git config --global user.email "email.kau@student.com"
+```
+
+### Cara Clone Project Ni
+
+#### Kalau Guna Laragon
+
+1. Download Laragon kat [laragon.org](https://laragon.org/download/)
+2. Install Laragon (pilih je version Full)
+3. Bukak Laragon, click kanan > Terminal
+4. Pergi ke folder www:
+```bash
+cd C:\laragon\www
+```
+5. Clone repo ni:
+```bash
+git clone https://github.com/AnthonyMuncherz/grocery_store.git grocery_store
+```
+6. Start Laragon (tekan Start All)
+7. Bukak browser, pergi ke `http://grocery_store.test`
+
+#### Kalau Guna XAMPP
+
+1. Download XAMPP dengan PHP 8.0 or later: [apachefriends.org](https://www.apachefriends.org/download.html)
+2. Install XAMPP (next-next je, senang)
+3. Bukak Git Bash, pergi ke folder htdocs:
+```bash
+cd C:\xampp\htdocs
+```
+4. Clone repo ni:
+```bash
+git clone https://github.com/AnthonyMuncherz/grocery_store.git grocery_store
+```
+5. Start Apache kat XAMPP Control Panel
+6. Bukak browser, pergi ke `http://localhost/grocery_store`
+
+### Command Git Yang Korang Kena Tau
+
+```bash
+# Check status project
+git status
+
+# Download update terbaru
+git pull origin main
+
+# Kalau nak push code baru:
+git add .                    # Add semua file yang dah edit
+git commit -m "Apa yang ko edit"  # Simpan changes
+git push origin main        # Upload ke GitHub
+
+# Kalau nak tukar branch:
+git checkout nama_branch
+
+# Kalau nak buat branch baru:
+git checkout -b nama_branch_baru
+
+# Kalau ada conflict masa pull:
+git stash                   # Simpan changes temporary
+git pull origin main        # Pull latest
+git stash pop              # Keluarkan balik changes
+```
+
+### Troubleshooting Common Problem
+
+1. **Error 404/Page Not Found**
+   - Check URL betul ke tak
+   - Pastikan Apache/Laragon dah start
+   - Check folder name sama dgn URL ke tak
+
+2. **Cannot Connect to Database**
+   - Check `database/grocery_store.db` ada ke tak
+   - Pastikan SQLite3 extension enabled
+   - Check permission folder database
+
+3. **Git Error**
+   - Kalau ada error "Permission denied":
+     ```bash
+     git config --global credential.helper wincred
+     ```
+   - Kalau conflict, jgn panic. Chat group discuss dulu
+
+4. **Localhost Tak Jalan**
+   - XAMPP: Check Apache jalan ke tak
+   - Laragon: Try refresh DNS (click kanan > Tools > Auto Create Virtual Hosts)
+   - Check port 80 free ke tak
+
+## Cara pasang
+
+1. Clone repo ni dalam folder www Laragon:
 ```bash
 cd C:\laragon\www
 git clone [repository-url] grocery_store
 ```
 
-2. Ensure SQLite3 extension is enabled in your PHP configuration:
+2. Pastikan extension SQLite3 dah on kat PHP config:
 ```ini
 extension=sqlite3
 ```
 
-3. Set appropriate permissions for the database directory:
+3. Tukar permission folder database:
 ```bash
 chmod 755 database/
 chmod 644 database/grocery_store.db
 ```
 
-4. Create required directories for file uploads and logs:
+4. Buat folder utk upload file & logs:
 ```bash
 mkdir -p assets/images/products
 mkdir -p logs
 ```
 
-5. Set write permissions for upload and log directories:
+5. Set permission folder upload & log:
 ```bash
 chmod 755 assets/images/products
 chmod 755 logs
 ```
 
-## Directory Structure
+## Structure Folder
 
 ```
 grocery_store/
@@ -76,16 +171,16 @@ grocery_store/
     └── footer.php
 ```
 
-## Module Structure
+## Structure Module
 
-Each module follows a consistent structure:
+Setiap module ada structure mcm ni:
 
 ```
 module_name/
 ├── index.php
 ├── functions.php
-��── config.php
-��── templates/
+├── config.php
+└── templates/
     ├── list.php
     ├── view.php
     ├── add.php
@@ -94,80 +189,80 @@ module_name/
 
 ## Database Schema
 
-The application uses SQLite3 with the following main tables:
+Guna SQLite3. Table utama dia:
 
 1. products
-   - Product information and inventory
+   - Info barang & stock
 2. orders
-   - Order details and status
+   - Detail order & status
 3. order_items
-   - Items within each order
+   - Barang2 dalam order
 4. inventory_logs
-   - Stock movement tracking
+   - Track pergerakan stock
 
-## Payment Methods
+## Payment Method
 
-The system supports simulation of common Malaysian payment methods:
+Support payment Malaysia (dummy je la):
 
-1. FPX (Financial Process Exchange)
-   - Major Malaysian banks
-2. Credit/Debit Cards
+1. FPX
+   - Bank2 Malaysia yg popular
+2. Kad Kredit/Debit
    - Visa
    - Mastercard
-   - Local bank cards
-3. E-wallets
-   - Touch 'n Go eWallet
+   - Kad bank local
+3. E-wallet
+   - TnG eWallet
    - Boost
    - GrabPay
-   - MAE by Maybank
+   - MAE
 
-## Development Guidelines
+## Guide Development
 
-1. Code Style
-   - Follow PSR-12 coding standards
-   - Use meaningful variable and function names
-   - Comment complex logic
-   - Keep functions small and focused
+1. Style Code
+   - Ikut standard PSR-12
+   - Nama function & variable kena make sense
+   - Comment kalau code complicated
+   - Function jgn panjang2
 
 2. Security
-   - Validate all input
-   - Use prepared statements
-   - Implement CSRF protection
+   - Check semua input
+   - Guna prepared statements
+   - Ada CSRF protection
    - Sanitize output
 
 3. Error Handling
-   - Log all errors appropriately
-   - Display user-friendly error messages
-   - Maintain separate logs for different error types
+   - Log semua error
+   - Error message kena user-friendly
+   - Log error ikut jenis
 
 ## Testing
 
-1. Test Scenarios
-   - Product CRUD operations
-   - Order processing flow
-   - Payment processing
-   - Inventory management
-   - Input validation
-   - Error handling
+1. Test apa?
+   - CRUD products
+   - Flow order
+   - Flow payment
+   - Stock counting
+   - Check input
+   - Handle error
 
-2. Test Data
-   - Use realistic Malaysian product names
-   - Use valid Malaysian phone numbers
-   - Use valid Malaysian addresses
-   - Use realistic MYR prices
+2. Data Test
+   - Nama product Malaysia
+   - No phone Malaysia
+   - Alamat Malaysia
+   - Harga dalam RM
 
-## Contributing
+## Nak contribute?
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+1. Fork repo ni
+2. Buat branch baru
+3. Commit changes
+4. Push ke branch tu
+5. Buat Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Project ni guna MIT License - tengok file LICENSE utk details.
 
 ## Support
 
-For support, please email support@grocerystore.my or create an issue in the repository.
+Kalau ada masalah, email kat support@grocerystore.my atau buat issue kat repo ni je.
