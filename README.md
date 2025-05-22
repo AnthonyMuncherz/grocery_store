@@ -1,6 +1,6 @@
 # Malaysian Grocery Store
 
-A vanilla PHP-based e-commerce system for a Malaysian grocery store, built with SQLite3 database.
+A vanilla PHP-based e-commerce system for a Malaysian grocery store, built with SQLite3 database. This version is styled with **Tailwind CSS**.
 
 ## Features
 
@@ -9,7 +9,7 @@ A vanilla PHP-based e-commerce system for a Malaysian grocery store, built with 
 - Order management
 - Malaysian payment processing (dummy implementation)
 - Inventory management
-- Responsive design
+- Responsive design with Tailwind CSS
 - Malaysian localization (currency, phone numbers, addresses)
 
 ## Requirements
@@ -18,6 +18,7 @@ A vanilla PHP-based e-commerce system for a Malaysian grocery store, built with 
 - SQLite3 extension enabled
 - Modern web browser
 - Laragon (for local development)
+- Internet connection (for Tailwind CSS CDN)
 
 ## Installation
 
@@ -83,8 +84,8 @@ Each module follows a consistent structure:
 module_name/
 ├── index.php
 ├── functions.php
-├── config.php
-└── templates/
+��── config.php
+��── templates/
     ├── list.php
     ├── view.php
     ├── add.php
@@ -169,4 +170,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Support
 
-For support, please email support@grocerystore.my or create an issue in the repository. 
+For support, please email support@grocerystore.my or create an issue in the repository.

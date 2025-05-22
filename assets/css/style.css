@@ -1,139 +1,47 @@
-/* Custom styles for Malaysian Grocery Store */
+/* Custom styles for Malaysian Grocery Store - Tailwind Edition */
 
-/* General styles */
-body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+/* 
+  Most styles from the original file have been replaced by Tailwind utility classes
+  applied directly in the HTML markup.
 
-.footer {
-    margin-top: auto;
-}
+  This CSS file now primarily contains:
+  1. Custom components defined using @apply (like .btn-malaysia).
+  2. Specific rules that are difficult or impossible to achieve with standard Tailwind utilities.
+  3. Base styles or overrides if necessary (none carried over from original except comments).
+*/
 
-/* Product card styles */
-.product-card {
-    transition: transform 0.2s;
-    height: 100%;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.product-image {
-    height: 200px;
-    object-fit: cover;
-}
-
-.product-price {
-    font-size: 1.25rem;
-    color: #28a745;
-    font-weight: bold;
-}
-
-/* Cart styles */
-.cart-item {
-    padding: 1rem;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.cart-item:last-child {
-    border-bottom: none;
-}
-
-.cart-total {
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-/* Payment method styles */
-.payment-method-card {
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 2px solid transparent;
-}
-
-.payment-method-card:hover,
-.payment-method-card.selected {
-    border-color: #007bff;
-    background-color: #f8f9fa;
-}
-
-.payment-method-card img {
-    height: 40px;
-    object-fit: contain;
-}
-
-/* Inventory status indicators */
-.stock-status {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-
-.stock-high {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.stock-medium {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.stock-low {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-/* Malaysian-specific styles */
+/* Malaysian phone number LTR styling (can also be done inline with dir="ltr") */
 .my-phone {
     direction: ltr;
     unicode-bidi: bidi-override;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .product-card {
-        margin-bottom: 1rem;
-    }
-    
-    .cart-item {
-        text-align: center;
-    }
-    
-    .cart-item img {
-        margin-bottom: 1rem;
-    }
-}
-
-/* Custom button styles */
+/* 
+  Custom button style defined using @apply.
+  Alternatively, apply these utilities directly to the button element in HTML.
+*/
 .btn-malaysia {
-    color: #fff;
-    background-color: #0052B4;
-    border-color: #0052B4;
+    @apply text-white bg-[#0052B4] border border-[#0052B4];
 }
 
 .btn-malaysia:hover {
-    color: #fff;
-    background-color: #003D87;
-    border-color: #003D87;
+    @apply bg-[#003D87] border-[#003D87];
 }
 
-/* Loading spinner */
-.loading-spinner {
-    display: inline-block;
-    width: 2rem;
-    height: 2rem;
-    border: 0.25rem solid #f3f3f3;
-    border-top: 0.25rem solid #007bff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
+/* 
+  The loading spinner animation is typically replaced by Tailwind's `animate-spin` utility
+  applied directly to the element, along with border/size utilities.
+  The original @keyframes and .loading-spinner rule are usually removed.
+*/
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-} 
+/* 
+  Body/footer layout (min-height, flex column, margin-top: auto) is handled
+  by applying utilities like min-h-screen, flex, flex-col, and mt-auto directly
+  to the body/wrapper and footer elements in the HTML.
+*/
+
+/* 
+  Product card, cart, payment method, and stock status styles are all handled
+  by applying utility classes (padding, margin, colors, borders, hover effects,
+  responsive utilities like md:, etc.) directly to the respective elements in HTML.
+*/

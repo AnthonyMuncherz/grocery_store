@@ -1,65 +1,143 @@
 <?php
 require_once __DIR__ . '/../includes/constants.php';
+
+// Determine alert classes based on session message type
+$alert_bg_color = 'bg-blue-100';
+$alert_border_color = 'border-blue-500';
+$alert_text_color = 'text-blue-700';
+$icon_class = 'fa-info-circle'; // Default icon
+
+if (isset($_SESSION['message_type'])) {
+    switch ($_SESSION['message_type']) {
+        case 'success':
+            $alert_bg_color = 'bg-green-100';
+            $alert_border_color = 'border-green-500';
+            $alert_text_color = 'text-green-700';
+            $icon_class = 'fa-check-circle';
+            break;
+        case 'warning':
+            $alert_bg_color = 'bg-yellow-100';
+            $alert_border_color = 'border-yellow-500';
+            $alert_text_color = 'text-yellow-700';
+            $icon_class = 'fa-exclamation-triangle';
+            break;
+        case 'danger':
+        case 'error':
+            $alert_bg_color = 'bg-red-100';
+            $alert_border_color = 'border-red-500';
+            $alert_text_color = 'text-red-700';
+            $icon_class = 'fa-exclamation-circle';
+            break;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo APP_NAME; ?></title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'malaysia-blue': '#0052B4',
+                        'malaysia-blue-dark': '#003D87',
+                    }
+                }
+            }
+        }
+    </script>
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom Styles (minimal, if any, after Tailwind integration) -->
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="index.php"><?php echo APP_NAME; ?></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo $module === 'products' ? 'active' : ''; ?>" 
-                           href="index.php?module=products">
-                            <i class="fas fa-shopping-basket"></i> Products
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <nav class="bg-malaysia-blue shadow-md">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a class="text-white font-bold text-xl" href="index.php"><?php echo APP_NAME; ?></a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a class="text-gray-300 hover:bg-malaysia-blue-dark hover:text-white px-3 py-2 rounded-md text-sm font-medium <?php echo ($module ?? '') === 'products' ? 'bg-malaysia-blue-dark text-white' : ''; ?>"
+                            href="index.php?module=products">
+                            <i class="fas fa-shopping-basket mr-1"></i> Products
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo $module === 'orders' ? 'active' : ''; ?>" 
-                           href="index.php?module=orders">
-                            <i class="fas fa-shopping-cart"></i> Orders
+                        <a class="text-gray-300 hover:bg-malaysia-blue-dark hover:text-white px-3 py-2 rounded-md text-sm font-medium <?php echo ($module ?? '') === 'orders' ? 'bg-malaysia-blue-dark text-white' : ''; ?>"
+                            href="index.php?module=orders">
+                            <i class="fas fa-receipt mr-1"></i> Orders
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo $module === 'inventory' ? 'active' : ''; ?>" 
-                           href="index.php?module=inventory">
-                            <i class="fas fa-boxes"></i> Inventory
+                        <a class="text-gray-300 hover:bg-malaysia-blue-dark hover:text-white px-3 py-2 rounded-md text-sm font-medium <?php echo ($module ?? '') === 'inventory' ? 'bg-malaysia-blue-dark text-white' : ''; ?>"
+                            href="index.php?module=inventory">
+                            <i class="fas fa-boxes mr-1"></i> Inventory
                         </a>
-                    </li>
-                </ul>
-                <div class="d-flex">
-                    <a href="index.php?module=orders&action=view_cart" class="btn btn-outline-light">
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <a href="index.php?module=orders&action=view_cart"
+                        class="text-gray-300 hover:bg-malaysia-blue-dark hover:text-white px-3 py-2 rounded-md text-sm font-medium relative">
                         <i class="fas fa-shopping-cart"></i> Cart
                         <?php if (isset($_SESSION['cart_count']) && $_SESSION['cart_count'] > 0): ?>
-                            <span class="badge bg-danger"><?php echo $_SESSION['cart_count']; ?></span>
+                            <span
+                                class="cart-badge absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"><?php echo $_SESSION['cart_count']; ?></span>
                         <?php endif; ?>
                     </a>
                 </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button"
+                        class="bg-malaysia-blue-dark inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                        aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
+                        <span class="sr-only">Open main menu</span>
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.php?module=products"
+                    class="text-gray-300 hover:bg-malaysia-blue-dark hover:text-white block px-3 py-2 rounded-md text-base font-medium <?php echo ($module ?? '') === 'products' ? 'bg-malaysia-blue-dark text-white' : ''; ?>">Products</a>
+                <a href="index.php?module=orders"
+                    class="text-gray-300 hover:bg-malaysia-blue-dark hover:text-white block px-3 py-2 rounded-md text-base font-medium <?php echo ($module ?? '') === 'orders' ? 'bg-malaysia-blue-dark text-white' : ''; ?>">Orders</a>
+                <a href="index.php?module=inventory"
+                    class="text-gray-300 hover:bg-malaysia-blue-dark hover:text-white block px-3 py-2 rounded-md text-base font-medium <?php echo ($module ?? '') === 'inventory' ? 'bg-malaysia-blue-dark text-white' : ''; ?>">Inventory</a>
+                <a href="index.php?module=orders&action=view_cart"
+                    class="text-gray-300 hover:bg-malaysia-blue-dark hover:text-white block px-3 py-2 rounded-md text-base font-medium relative">
+                    Cart
+                    <?php if (isset($_SESSION['cart_count']) && $_SESSION['cart_count'] > 0): ?>
+                        <span
+                            class="cart-badge ml-2 inline-block bg-red-500 text-white text-xs rounded-full h-5 px-1.5 py-0.5 items-center justify-center"><?php echo $_SESSION['cart_count']; ?></span>
+                    <?php endif; ?>
+                </a>
             </div>
         </div>
     </nav>
-    <div class="container mt-4">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-4 flex-grow">
         <?php if (isset($_SESSION['message'])): ?>
-            <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show">
-                <?php 
-                    echo $_SESSION['message'];
-                    unset($_SESSION['message']);
-                    unset($_SESSION['message_type']);
+            <div class="<?php echo $alert_bg_color . ' ' . $alert_border_color . ' ' . $alert_text_color; ?> border-l-4 p-4 mb-4 relative"
+                role="alert">
+                <p class="font-bold"><i
+                        class="fas <?php echo $icon_class; ?> mr-2"></i><?php echo ucfirst($_SESSION['message_type'] ?? 'Notification'); ?>
+                </p>
+                <p><?php echo $_SESSION['message']; ?></p>
+                <?php
+                unset($_SESSION['message']);
+                unset($_SESSION['message_type']);
                 ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" data-bs-dismiss="alert"
+                    aria-label="Close">
+                    <span class="text-2xl <?php echo $alert_text_color; ?> opacity-75 hover:opacity-100">&times;</span>
+                </button>
             </div>
-        <?php endif; ?> 
+        <?php endif; ?>
