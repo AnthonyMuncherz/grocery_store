@@ -31,6 +31,37 @@ function formatMYPhone($phone) {
     return preg_replace('/(\d{2})(\d{8})/', '+60 $1-$2', $phone);
 }
 
+// Generates a CSRF token and stores it in session 'Added by Khaleesh'
+function generateCsrfToken(): string {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+//'Added by Khaleesh'
+function getDB() {
+    static $db = null;
+    if ($db === null) {
+        $dbPath = __DIR__ . '/../database/grocery_store.db';
+        $db = new SQLite3($dbPath);
+        $db->exec('PRAGMA foreign_keys = ON;');
+    }
+    return $db;
+}
+
+// Verifies the CSRF token sent from form matches the session token 'Added by Khaleesh'
+function verifyCsrfToken(string $token): bool {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
+
+
 /**
  * Generate unique reference number
  */
