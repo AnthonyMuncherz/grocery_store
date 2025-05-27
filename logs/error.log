@@ -1,0 +1,2 @@
+[2025-05-22 21:47:16] [ERROR] Module file not found for module: 'orders' at path: 'E:\laragon\www\grocery_store/modules/orders/index.php'
+[2025-05-22 21:47:17] [ERROR] Module file not found for module: 'inventory' at path: 'E:\laragon\www\grocery_store/modules/inventory/index.php'
