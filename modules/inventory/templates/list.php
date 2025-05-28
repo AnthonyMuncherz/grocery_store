@@ -68,11 +68,23 @@ $inventory_items = getInventoryItems($category_id, $search);
             </form>
         </div>
 
-        <!-- Add Product Toggle -->
-        <button onclick="toggleProductForm()" 
-                class="h-fit self-end bg-theme-red hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow transition-all">
-            <i class="fas fa-plus mr-2"></i>Add New Product
-        </button>
+
+                <!-- Action Buttons Container -->
+                <div class="flex flex-col md:flex-row gap-3 h-fit self-end">
+                <!-- Add New Product -->
+                    <button onclick="toggleProductForm()" 
+                        class="bg-theme-red hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow transition-all inline-flex items-center">
+                        <i class="fas fa-plus mr-2"></i>Add New Product
+                     </button>
+
+                <!-- Add Stock -->
+                <a href="index.php?module=inventory&action=add" 
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow transition-all inline-flex items-center">
+                        <i class="fas fa-cubes mr-2"></i>Add Stock
+                </a>
+                </div>
+
+
     </div>
 
     <!-- Collapsible Add Product Form -->

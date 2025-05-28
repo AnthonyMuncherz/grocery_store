@@ -49,15 +49,10 @@ $products = getProductsWithStock();
             <label class="block font-semibold">Notes (optional)</label>
             <textarea name="notes" class="w-full border px-3 py-2 rounded"></textarea>
         </div>
-        <div class="mt-6">
-    <a href="?action=list" class="inline-block px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-        ← Back to Inventory
-    </a>
-</div>
 
         <div class="pt-4">
             <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add Stock</button>
-            <a href="?action=list" class="ml-2 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Cancel</a>
+            <a href="/grocery_store/index.php?module=inventory" class="ml-2 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Cancel</a>
         </div>
     </form>
 </div>

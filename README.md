@@ -1,4 +1,4 @@
-# Kedai Runcit Malaysia
+# Kedai Runcit 
 
 Sistem ecommerce guna vanilla PHP + SQLite3 database. UI dia pakai **Tailwind CSS**.
 

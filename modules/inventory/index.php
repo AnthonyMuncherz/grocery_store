@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'add_product') {
     }
 }
 
-// Now output headers and content
 require_once __DIR__ . '/../../templates/header.php';
 
 switch ($action) {
@@ -60,5 +59,5 @@ switch ($action) {
         break;
 }
 
-// Include footer at the end
+
 require_once __DIR__ . '/../../templates/footer.php';

@@ -20,7 +20,10 @@ function getInventoryLogs(): array {
 function getProductsWithStock(): array {
     $db = initializeDatabase();
 
-    $sql = "SELECT id, name, price, category_id, stock_quantity FROM products ORDER BY name ASC";
+    $sql = "SELECT id, name, price, category_id, stock_quantity 
+            FROM products 
+            WHERE deleted_at IS NULL 
+            ORDER BY name ASC";
 
     $result = $db->query($sql);
     $products = [];
@@ -29,6 +32,7 @@ function getProductsWithStock(): array {
     }
     return $products;
 }
+
 
 // Fetch a product by ID with current stock info
 function getProductById($id) {

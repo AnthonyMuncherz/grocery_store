@@ -104,14 +104,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_stock'])) {
             <label class="block mt-4 mb-2 font-semibold">Note (optional):</label>
             <textarea name="note" class="border p-2 w-full mb-2" rows="2"></textarea>
 
-           <!-- All buttons inline within a single flex container -->
-<div class="flex flex-wrap gap-2 mt-4">
-    <!-- Update Stock Form -->
-    <form method="POST" class="inline">
+    <!-- All buttons inline within a single flex container -->
+        <div class="flex flex-wrap gap-2 mt-4">
+        <!-- Update Stock Form -->
+        <form method="POST" class="inline">
         <button type="submit" name="update_stock" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Update Stock
+                Update Stock
         </button>
-    </form>
+        </form>
 
     <!-- Soft Delete Form -->
     <form method="POST" onsubmit="return confirm('Are you sure you want to soft delete this product?');" class="inline">
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_stock'])) {
     </form>
 
     <!-- Back Link -->
-    <a href="/grocery_store/modules/inventory/index.php?action=list"
+    <a href="/grocery_store/index.php?module=inventory"
        class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 inline-block">
         ← Back
     </a>
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_stock'])) {
 
     <?php else: ?>
         <p class="text-gray-600 mb-4">Product not found or already deleted.</p>
-        <a href="/grocery_store/modules/inventory/index.php?action=list"
+        <a href="/grocery_store/index.php?module=inventory"
            class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 inline-block">
             ← Back
         </a>
