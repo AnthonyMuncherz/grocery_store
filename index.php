@@ -1,7 +1,7 @@
 <?php
 /**
  * Main Entry Point
- * Malaysian Grocery Store
+ *  Grocery Store
  */
 
 require_once __DIR__ . '/includes/functions.php';
