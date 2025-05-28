@@ -2,7 +2,7 @@
 
 Sistem ecommerce guna vanilla PHP + SQLite3 database. UI dia pakai **Tailwind CSS**.
 
-## Apa yg ada?
+## Apa ada
 
 - Boleh browse & search barang
 - Ada shopping cart
