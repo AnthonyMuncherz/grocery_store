@@ -36,3 +36,9 @@
 
 [2025-05-22 21:47:16] [ERROR] Module file not found for module: 'orders' at path: 'E:\laragon\www\grocery_store/modules/orders/index.php'
 [2025-05-22 21:47:17] [ERROR] Module file not found for module: 'inventory' at path: 'E:\laragon\www\grocery_store/modules/inventory/index.php'
+[2025-05-28 18:31:35] [ERROR] Module file not found for module: 'orders' at path: 'C:\xampp\htdocs\grocery_store/modules/orders/index.php'
+[2025-05-28 18:31:47] [ERROR] Module file not found for module: 'orders' at path: 'C:\xampp\htdocs\grocery_store/modules/orders/index.php'
+[2025-05-28 18:32:10] [ERROR] Module file not found for module: 'orders' at path: 'C:\xampp\htdocs\grocery_store/modules/orders/index.php'
+[2025-05-28 18:32:19] [ERROR] Module file not found for module: 'orders' at path: 'C:\xampp\htdocs\grocery_store/modules/orders/index.php'
+[2025-05-28 18:32:20] [ERROR] Module file not found for module: 'orders' at path: 'C:\xampp\htdocs\grocery_store/modules/orders/index.php'
+[2025-05-31 17:25:11] [ERROR] Module file not found for module: 'orders' at path: 'C:\xampp\htdocs\grocery_store/modules/orders/index.php'
