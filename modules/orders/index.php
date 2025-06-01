@@ -1,21 +1,292 @@
 <?php
 /**
- * Orders Module - Create Order Page
+ * Orders Module - Main Entry Point
  */
 
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/constants.php';
 require_once __DIR__ . '/functions.php';  // orders module functions
 
+// Get action parameter
+$action = isset($_GET['action']) ? validateInput($_GET['action']) : 'list';
 
+// Handle different actions
+switch ($action) {
+    case 'list':
+        // Get filter parameters
+        $status_filter = isset($_GET['status']) ? validateInput($_GET['status']) : '';
+        $sort_by = isset($_GET['sort_by']) ? validateInput($_GET['sort_by']) : 'created_at';
+        $sort_dir = isset($_GET['sort_dir']) ? validateInput($_GET['sort_dir']) : 'DESC';
+        
+        // Pagination parameters
+        $per_page = 20;
+        $current_page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $offset = ($current_page - 1) * $per_page;
+        
+        try {
+            // Get orders based on filters
+            $orders = getAllOrders($per_page, $offset, $sort_by, $sort_dir);
+            $total_orders = getTotalOrdersCount();
+            $total_pages = ceil($total_orders / $per_page);
+            
+            // Include header and list template
+            require_once __DIR__ . '/../../templates/header.php';
+            require_once __DIR__ . '/templates/list.php';
+            require_once __DIR__ . '/../../templates/footer.php';
+            
+        } catch (Exception $e) {
+            $error = "Error loading orders: " . $e->getMessage();
+            require_once __DIR__ . '/../../templates/header.php';
+            echo "<div class='alert alert-danger'>$error</div>";
+            require_once __DIR__ . '/../../templates/footer.php';
+        }
+        break;
+        
+    case 'view':
+        $order_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        
+        if ($order_id <= 0) {
+            header('Location: index.php?module=orders&action=list');
+            exit;
+        }
+        
+        try {
+            $order = getOrderById($order_id);
+            if (!$order) {
+                $_SESSION['message'] = "Order not found.";
+                $_SESSION['message_type'] = 'error';
+                header('Location: index.php?module=orders&action=list');
+                exit;
+            }
+            
+            // Include view template (to be created)
+            require_once __DIR__ . '/../../templates/header.php';
+            require_once __DIR__ . '/templates/view.php';
+            require_once __DIR__ . '/../../templates/footer.php';
+            
+        } catch (Exception $e) {
+            $_SESSION['message'] = "Error loading order: " . $e->getMessage();
+            $_SESSION['message_type'] = 'error';
+            header('Location: index.php?module=orders&action=list');
+            exit;
+        }
+        break;
+        
+    case 'edit':
+        $order_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        
+        if ($order_id <= 0) {
+            $_SESSION['message'] = "Invalid order ID.";
+            $_SESSION['message_type'] = 'error';
+            header('Location: index.php?module=orders&action=list');
+            exit;
+        }
+        
+        try {
+            $order = getOrderById($order_id);
+            if (!$order) {
+                $_SESSION['message'] = "Order not found.";
+                $_SESSION['message_type'] = 'error';
+                header('Location: index.php?module=orders&action=list');
+                exit;
+            }
+            
+            $products = getProducts();
+            
+            // Include edit template
+            require_once __DIR__ . '/../../templates/header.php';
+            require_once __DIR__ . '/templates/edit.php';
+            require_once __DIR__ . '/../../templates/footer.php';
+            
+        } catch (Exception $e) {
+            $_SESSION['message'] = "Error loading order: " . $e->getMessage();
+            $_SESSION['message_type'] = 'error';
+            header('Location: index.php?module=orders&action=list');
+            exit;
+        }
+        break;
+        
+    case 'update':
+        $order_id = isset($_POST['order_id']) ? (int)$_POST['order_id'] : 0;
+        
+        if ($order_id <= 0) {
+            $_SESSION['message'] = "Invalid order ID.";
+            $_SESSION['message_type'] = 'error';
+            header('Location: index.php?module=orders&action=list');
+            exit;
+        }
+        
+        try {
+            // Check if order exists
+            if (!orderExists($order_id)) {
+                $_SESSION['message'] = "Order not found.";
+                $_SESSION['message_type'] = 'error';
+                header('Location: index.php?module=orders&action=list');
+                exit;
+            }
+            
+            handleUpdateOrder($order_id);
+            
+        } catch (Exception $e) {
+            $_SESSION['message'] = "Error updating order: " . $e->getMessage();
+            $_SESSION['message_type'] = 'error';
+            header('Location: index.php?module=orders&action=edit&id=' . $order_id);
+            exit;
+        }
+        break;
+        
+    case 'delete':
+        $order_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        
+        if ($order_id <= 0) {
+            $_SESSION['message'] = "Invalid order ID.";
+            $_SESSION['message_type'] = 'error';
+            header('Location: index.php?module=orders&action=list');
+            exit;
+        }
+        
+        try {
+            if (!orderExists($order_id)) {
+                $_SESSION['message'] = "Order not found.";
+                $_SESSION['message_type'] = 'error';
+                header('Location: index.php?module=orders&action=list');
+                exit;
+            }
+            
+            $result = deleteOrder($order_id);
+            
+            if ($result) {
+                $_SESSION['message'] = "Order #$order_id has been successfully deleted.";
+                $_SESSION['message_type'] = 'success';
+            } else {
+                $_SESSION['message'] = "Failed to delete order.";
+                $_SESSION['message_type'] = 'error';
+            }
+            
+        } catch (Exception $e) {
+            $_SESSION['message'] = "Error deleting order: " . $e->getMessage();
+            $_SESSION['message_type'] = 'error';
+        }
+        
+        header('Location: index.php?module=orders&action=list');
+        exit;
+        break;
+        
+    case 'add':
+    default:
+        // Default behavior - create order (existing code)
+        handleCreateOrder();
+        break;
+}
 
+function handleUpdateOrder($order_id) {
+    global $db;
+    
+    $errors = [];
+    $success = '';
+    
+    // Sanitize and validate input
+    $customer_name = trim($_POST['customer_name'] ?? '');
+    $customer_email = trim($_POST['customer_email'] ?? '');
+    $customer_phone = trim($_POST['customer_phone'] ?? '');
+    $shipping_address = trim($_POST['shipping_address'] ?? '');
+    $payment_method = trim($_POST['payment_method'] ?? '');
+    $status = trim($_POST['status'] ?? 'pending');
+    
+    $product_ids = $_POST['product_id'] ?? [];
+    $quantities = $_POST['quantity'] ?? [];
 
-$errors = [];
-$success = '';
+    if ($customer_name === '') $errors[] = "Customer name is required.";
+    if ($customer_email === '' || !filter_var($customer_email, FILTER_VALIDATE_EMAIL)) $errors[] = "Valid email is required.";
+    if ($customer_phone === '') $errors[] = "Customer phone is required.";
+    if ($shipping_address === '') $errors[] = "Shipping address is required.";
+    if ($payment_method === '') $errors[] = "Payment method is required.";
 
-try {
-    // Fetch all products to list in dropdown
+    // Validate order items
+    $order_items = [];
     $products = getProducts();
+    
+    for ($i = 0; $i < count($product_ids); $i++) {
+        $pid = intval($product_ids[$i]);
+        $qty = intval($quantities[$i]);
+        if ($pid <= 0 || $qty <= 0) continue;
+
+        // Check product exists & stock
+        $product = null;
+        foreach ($products as $p) {
+            if ($p['id'] == $pid) {
+                $product = $p;
+                break;
+            }
+        }
+        if (!$product) {
+            $errors[] = "Selected product does not exist.";
+            break;
+        }
+
+        $order_items[] = [
+            'product_id' => $pid,
+            'quantity' => $qty,
+            'unit_price' => $product['price'],
+            'subtotal' => $product['price'] * $qty,
+        ];
+    }
+
+    if (count($order_items) === 0) {
+        $errors[] = "At least one valid order item is required.";
+    }
+
+    // Check for duplicate products
+    $product_ids_checked = array_column($order_items, 'product_id');
+    if (count($product_ids_checked) !== count(array_unique($product_ids_checked))) {
+        $errors[] = "Duplicate products are not allowed in the order.";
+    }
+
+    if (empty($errors)) {
+        // Calculate total amount
+        $total_amount = 0;
+        foreach ($order_items as $item) {
+            $total_amount += $item['subtotal'];
+        }
+
+        // Update order
+        $result = updateOrder(
+            $order_id,
+            $customer_name,
+            $customer_email,
+            $customer_phone,
+            $shipping_address,
+            $total_amount,
+            $status,
+            $payment_method,
+            $order_items
+        );
+
+        if ($result) {
+            $_SESSION['message'] = "Order #$order_id updated successfully. Total: RM " . number_format($total_amount, 2);
+            $_SESSION['message_type'] = 'success';
+            header('Location: index.php?module=orders&action=view&id=' . $order_id);
+            exit;
+        } else {
+            $errors[] = "Failed to update order.";
+        }
+    }
+    
+    // If there are errors, redirect back to edit form with errors
+    $_SESSION['edit_errors'] = $errors;
+    header('Location: index.php?module=orders&action=edit&id=' . $order_id);
+    exit;
+}
+
+function handleCreateOrder() {
+    global $db;
+    
+    $errors = [];
+    $success = '';
+
+    try {
+        // Fetch all products to list in dropdown
+        $products = getProducts();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Sanitize and validate input
@@ -385,6 +656,7 @@ document.getElementById('add-product-btn').addEventListener('click', addProductR
 </script>
 
 <?php
-// Include footer
-require_once __DIR__ . '/../../templates/footer.php';
+    // Include footer
+    require_once __DIR__ . '/../../templates/footer.php';
+}
 ?>
