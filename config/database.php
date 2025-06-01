@@ -2,6 +2,7 @@
 /**
  * Database Configuration
  * SQLite3 configuration for the Grocery Store
+ * xampp/htdocs/grocery_store/database/grocery_store.db
  */
 
 define('DB_PATH', __DIR__ . '/../database/grocery_store.db');
