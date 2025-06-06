@@ -166,6 +166,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'bulk_stock_update') {
     exit;
 }
 
+// Handle add stock from add page
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'add') {
+    $product_id = $_POST['product_id'] ?? '';
+    $quantity = intval($_POST['quantity'] ?? 0);
+    $notes = trim($_POST['notes'] ?? '');
+
+    if ($product_id && $quantity > 0) {
+        $success = addStockToProduct($product_id, $quantity, $notes);
+        if ($success) {
+            $_SESSION['success_message'] = "Stock added successfully! Added $quantity units to the selected product.";
+            header("Location: index.php?module=inventory&action=list");
+            exit;
+        } else {
+            $_SESSION['error_message'] = "Failed to add stock. Please try again.";
+        }
+    } else {
+        if (!$product_id) {
+            $_SESSION['error_message'] = "Please select a product.";
+        } elseif ($quantity <= 0) {
+            $_SESSION['error_message'] = "Quantity must be greater than zero.";
+        }
+    }
+    
+    // Redirect back to add page to show error message
+    header("Location: index.php?module=inventory&action=add");
+    exit;
+}
+
 require_once __DIR__ . '/../../templates/header.php';
 
 // Display session messages

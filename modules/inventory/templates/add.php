@@ -2,31 +2,6 @@
 require_once __DIR__ . '/../../../includes/functions.php';
 require_once __DIR__ . '/../functions.php';
 
-$success = false;
-$error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $product_id = $_POST['product_id'] ?? '';
-    $quantity = intval($_POST['quantity'] ?? 0);
-    $notes = trim($_POST['notes'] ?? '');
-
-    if ($product_id && $quantity > 0) {
-        $success = addStockToProduct($product_id, $quantity, $notes);
-        if ($success) {
-            $_SESSION['success_message'] = "Stock added successfully! Added $quantity units to the selected product.";
-            header("Location: index.php?module=inventory&action=list");
-            exit;
-        } else {
-            $error = "Failed to add stock. Please try again.";
-        }
-    } else {
-        if (!$product_id) {
-            $error = "Please select a product.";
-        } elseif ($quantity <= 0) {
-            $error = "Quantity must be greater than zero.";
-        }
-    }
-}
-
 $products = getProductsWithStock();
 $lowStockProducts = getLowStockProducts(10);
 ?>
@@ -64,16 +39,7 @@ $lowStockProducts = getLowStockProducts(10);
     </div>
     <?php endif; ?>
 
-    <!-- Error/Success Messages -->
-    <?php if ($success): ?>
-        <div class="p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-            <i class="fas fa-check-circle mr-2"></i>Stock added successfully!
-        </div>
-    <?php elseif ($error): ?>
-        <div class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-            <i class="fas fa-exclamation-circle mr-2"></i><?= htmlspecialchars($error) ?>
-        </div>
-    <?php endif; ?>
+
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
