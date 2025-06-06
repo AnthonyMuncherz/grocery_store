@@ -57,13 +57,10 @@ $lowStockProducts = getLowStockProducts(10);
                         </label>
                         <select name="product_id" 
                                 class="w-full border border-gray-300 rounded-md px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                                required
-                                onchange="updateProductInfo(this)">
+                                required>
                             <option value="">-- Choose a product --</option>
                             <?php foreach ($products as $p): ?>
-                                <option value="<?= $p['id'] ?>" 
-                                        data-current-stock="<?= $p['stock_quantity'] ?>"
-                                        data-price="<?= $p['price'] ?>">
+                                <option value="<?= $p['id'] ?>">
                                     <?= htmlspecialchars($p['name']) ?> 
                                     (Current: <?= $p['stock_quantity'] ?> units)
                                 </option>
@@ -71,20 +68,7 @@ $lowStockProducts = getLowStockProducts(10);
                         </select>
                     </div>
 
-                    <!-- Product Info Display -->
-                    <div id="productInfo" class="hidden bg-gray-50 p-4 rounded-lg">
-                        <h4 class="font-semibold text-gray-700 mb-2">Product Information</h4>
-                        <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <span class="text-gray-600">Current Stock:</span>
-                                <span id="currentStock" class="font-semibold">-</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-600">Price:</span>
-                                <span id="productPrice" class="font-semibold">-</span>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">
@@ -95,21 +79,14 @@ $lowStockProducts = getLowStockProducts(10);
                                min="1" 
                                class="w-full border border-gray-300 rounded-md px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
                                placeholder="Enter quantity to add"
-                               required
-                               onchange="calculateNewStock()">
+                               required>
                         <p class="text-xs text-gray-600 mt-1">
                             <i class="fas fa-info-circle mr-1"></i>
                             This will be added to the current stock
                         </p>
                     </div>
 
-                    <!-- New Stock Preview -->
-                    <div id="stockPreview" class="hidden bg-blue-50 p-4 rounded-lg">
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-700">New Total Stock:</span>
-                            <span id="newStockTotal" class="text-xl font-bold text-blue-600">-</span>
-                        </div>
-                    </div>
+
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">
@@ -127,8 +104,7 @@ $lowStockProducts = getLowStockProducts(10);
                             <i class="fas fa-plus mr-2"></i>Add Stock
                         </button>
                         <button type="reset" 
-                                class="px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-50 transition-colors duration-200"
-                                onclick="resetForm()">
+                                class="px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-50 transition-colors duration-200">
                             <i class="fas fa-undo mr-2"></i>Reset
                         </button>
                     </div>
@@ -178,53 +154,4 @@ $lowStockProducts = getLowStockProducts(10);
     </div>
 </div>
 
-<script>
-function updateProductInfo(select) {
-    const productInfo = document.getElementById('productInfo');
-    const currentStock = document.getElementById('currentStock');
-    const productPrice = document.getElementById('productPrice');
-    
-    if (select.value) {
-        const option = select.options[select.selectedIndex];
-        const stock = option.getAttribute('data-current-stock');
-        const price = option.getAttribute('data-price');
-        
-        currentStock.textContent = stock + ' units';
-        productPrice.textContent = 'RM ' + parseFloat(price).toFixed(2);
-        productInfo.classList.remove('hidden');
-        
-        calculateNewStock();
-    } else {
-        productInfo.classList.add('hidden');
-        document.getElementById('stockPreview').classList.add('hidden');
-    }
-}
 
-function calculateNewStock() {
-    const select = document.querySelector('select[name="product_id"]');
-    const quantityInput = document.querySelector('input[name="quantity"]');
-    const stockPreview = document.getElementById('stockPreview');
-    const newStockTotal = document.getElementById('newStockTotal');
-    
-    if (select.value && quantityInput.value) {
-        const option = select.options[select.selectedIndex];
-        const currentStock = parseInt(option.getAttribute('data-current-stock'));
-        const addQuantity = parseInt(quantityInput.value);
-        
-        if (!isNaN(currentStock) && !isNaN(addQuantity) && addQuantity > 0) {
-            const newTotal = currentStock + addQuantity;
-            newStockTotal.textContent = newTotal + ' units';
-            stockPreview.classList.remove('hidden');
-        } else {
-            stockPreview.classList.add('hidden');
-        }
-    } else {
-        stockPreview.classList.add('hidden');
-    }
-}
-
-function resetForm() {
-    document.getElementById('productInfo').classList.add('hidden');
-    document.getElementById('stockPreview').classList.add('hidden');
-}
-</script>

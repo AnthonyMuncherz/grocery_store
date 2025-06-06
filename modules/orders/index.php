@@ -280,13 +280,13 @@ function handleUpdateOrder($order_id) {
 
 function handleCreateOrder() {
     global $db;
-    
-    $errors = [];
-    $success = '';
 
-    try {
-        // Fetch all products to list in dropdown
-        $products = getProducts();
+$errors = [];
+$success = '';
+
+try {
+    // Fetch all products to list in dropdown
+    $products = getProducts();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Sanitize and validate input
@@ -656,7 +656,7 @@ document.getElementById('add-product-btn').addEventListener('click', addProductR
 </script>
 
 <?php
-    // Include footer
-    require_once __DIR__ . '/../../templates/footer.php';
+// Include footer
+require_once __DIR__ . '/../../templates/footer.php';
 }
 ?>
