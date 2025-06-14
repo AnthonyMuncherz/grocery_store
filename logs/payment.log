@@ -1,0 +1,2 @@
+[2025-06-14 23:11:05] [PAYMENT] FPX payment failed Data: {"bank":"MBB","reason":"Transaction limit exceeded","amount":3.9}
+[2025-06-14 23:11:18] [PAYMENT] FPX payment successful Data: {"bank":"MBB","transaction_id":"FPX202506142311184040","amount":3.9}
