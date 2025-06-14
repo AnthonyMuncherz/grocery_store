@@ -29,7 +29,7 @@ $default_action = ($module === 'home') ? 'index' : 'list'; // Default action for
 $action = isset($_GET['action']) ? validateInput($_GET['action']) : $default_action;
 
 // Define valid modules and actions
-$validModules = ['home', 'products', 'orders', 'payments', 'inventory']; // Added 'home'
+$validModules = ['home', 'products', 'orders', 'payments', 'inventory', 'cart']; // Added 'home' and 'cart'
 // Note: Action validation might be better handled within each module.
 $validActions = ['index', 'list', 'view', 'add', 'edit', 'delete', 'update_cart', 'view_cart', 'checkout', 'process_payment', 'success', 'cancel'];
 

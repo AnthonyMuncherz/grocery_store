@@ -64,6 +64,8 @@ $current_module = $_GET['module'] ?? 'home'; // Default to 'home' if not set
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Custom Styles (minimal, if any, after Tailwind integration) -->
     <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Cart JavaScript -->
+    <script src="assets/js/cart.js"></script>
 </head>
 
 <body class="bg-gray-100 flex flex-col min-h-screen">
@@ -94,13 +96,10 @@ $current_module = $_GET['module'] ?? 'home'; // Default to 'home' if not set
                     </div>
                 </div>
                 <div class="hidden md:block">
-                    <a href="index.php?module=orders&action=view_cart"
-                        class="text-gray-300 hover:bg-theme-red-dark hover:text-white px-3 py-2 rounded-md text-sm font-medium relative">
+                    <a href="index.php?module=cart"
+                        class="text-gray-300 hover:bg-theme-red-dark hover:text-white px-3 py-2 rounded-md text-sm font-medium relative <?php echo $current_module === 'cart' ? 'bg-theme-red-dark text-white' : ''; ?>">
                         <i class="fas fa-shopping-cart"></i> Cart
-                        <?php if (isset($_SESSION['cart_count']) && $_SESSION['cart_count'] > 0): ?>
-                            <span
-                                class="cart-badge absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"><?php echo $_SESSION['cart_count']; ?></span>
-                        <?php endif; ?>
+                        <span id="cart-count" class="cart-badge absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="display: none;">0</span>
                     </a>
                 </div>
                 <div class="-mr-2 flex md:hidden">
@@ -133,13 +132,10 @@ $current_module = $_GET['module'] ?? 'home'; // Default to 'home' if not set
                     class="text-gray-300 hover:bg-theme-red-dark hover:text-white block px-3 py-2 rounded-md text-base font-medium <?php echo $current_module === 'inventory' ? 'bg-theme-red-dark text-white' : ''; ?>">
                     <i class="fas fa-boxes mr-2"></i>Inventory
                 </a>
-                <a href="index.php?module=orders&action=view_cart"
-                    class="text-gray-300 hover:bg-theme-red-dark hover:text-white block px-3 py-2 rounded-md text-base font-medium relative">
+                <a href="index.php?module=cart"
+                    class="text-gray-300 hover:bg-theme-red-dark hover:text-white block px-3 py-2 rounded-md text-base font-medium relative <?php echo $current_module === 'cart' ? 'bg-theme-red-dark text-white' : ''; ?>">
                     <i class="fas fa-shopping-cart mr-2"></i>Cart
-                    <?php if (isset($_SESSION['cart_count']) && $_SESSION['cart_count'] > 0): ?>
-                        <span
-                            class="cart-badge ml-2 inline-block bg-yellow-500 text-white text-xs rounded-full h-5 px-1.5 py-0.5 items-center justify-center"><?php echo $_SESSION['cart_count']; ?></span>
-                    <?php endif; ?>
+                    <span id="cart-count-mobile" class="cart-badge ml-2 inline-block bg-yellow-500 text-white text-xs rounded-full h-5 px-1.5 py-0.5 items-center justify-center" style="display: none;">0</span>
                 </a>
             </div>
         </div>
@@ -163,3 +159,50 @@ $current_module = $_GET['module'] ?? 'home'; // Default to 'home' if not set
                 </button>
             </div>
         <?php endif; ?>
+
+        <script>
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-button').addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Initialize cart count on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                // Update cart count for both desktop and mobile
+                updateCartCount();
+                
+                function updateCartCount() {
+                    fetch('api/cart.php?action=count')
+                        .then(response => response.json())
+                        .then(data => {
+                            const cartCount = data.count || 0;
+                            const cartCountElement = document.getElementById('cart-count');
+                            const cartCountMobileElement = document.getElementById('cart-count-mobile');
+                            
+                            if (cartCountElement) {
+                                cartCountElement.textContent = cartCount;
+                                cartCountElement.style.display = cartCount > 0 ? 'flex' : 'none';
+                            }
+                            
+                            if (cartCountMobileElement) {
+                                cartCountMobileElement.textContent = cartCount;
+                                cartCountMobileElement.style.display = cartCount > 0 ? 'inline-block' : 'none';
+                            }
+                        })
+                        .catch(error => {
+                            console.log('Cart count update failed:', error);
+                        });
+                }
+
+                // Make updateCartCount available globally
+                window.updateCartCount = updateCartCount;
+            });
+
+            // Close alert messages
+            document.querySelectorAll('[data-bs-dismiss="alert"]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    this.parentElement.remove();
+                });
+            });
+        </script>

@@ -65,6 +65,34 @@ function getProduct($id) {
 }
 
 /**
+ * Get related products from same category
+ */
+function getRelatedProducts($category_id, $exclude_product_id, $limit = 4) {
+    $db = getDbConnection();
+    
+    $stmt = $db->prepare("SELECT p.*, c.name as category_name 
+                         FROM products p 
+                         JOIN categories c ON p.category_id = c.id 
+                         WHERE p.category_id = :category_id 
+                         AND p.id != :exclude_id 
+                         AND p.deleted_at IS NULL 
+                         ORDER BY RANDOM() 
+                         LIMIT :limit");
+    $stmt->bindValue(':category_id', $category_id, SQLITE3_INTEGER);
+    $stmt->bindValue(':exclude_id', $exclude_product_id, SQLITE3_INTEGER);
+    $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
+    
+    $result = $stmt->execute();
+    $products = [];
+    
+    while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+        $products[] = $row;
+    }
+    
+    return $products;
+}
+
+/**
  * Get all categories
  */
 function getCategories() {
