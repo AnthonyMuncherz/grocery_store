@@ -1,6 +1,0 @@
-[2025-05-28 18:27:41] [DEBUG] Stock updated successfully for product '100 Plus' (ID: 15). Adjustment: -20, New stock: 280
-[2025-05-28 18:31:14] [DEBUG] Stock updated successfully for product '100 Plus' (ID: 15). Adjustment: -100, New stock: 180
-[2025-06-06 15:31:23] [DEBUG] Stock updated successfully for product 'Milo Tin' (ID: 12). Adjustment: -99, New stock: 100
-[2025-06-06 15:32:44] [DEBUG] Stock updated successfully for product 'Santan Kara' (ID: 8). Adjustment: 200, New stock: 498
-[2025-06-06 15:32:57] [DEBUG] Stock updated successfully for product 'Santan Kara' (ID: 8). Adjustment: -300, New stock: 198
-[2025-06-06 15:33:03] [DEBUG] Stock updated successfully for product 'Santan Kara' (ID: 8). Adjustment: -98, New stock: 100
