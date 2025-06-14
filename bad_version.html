@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grocery Store – Legacy Version</title>
+    <!-- Intentionally messy, inline styles -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #fffbcc;
+            font-family: "Comic Sans MS", cursive, sans-serif; /* famously disliked font */
+        }
+        header {
+            background: #00aaff;
+            color: #ffffff;
+            text-align: center;
+            padding: 25px 10px;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            background: #ff6600;
+            overflow: hidden;
+        }
+        nav li {
+            float: left;
+            padding: 12px 18px;
+            border-right: 1px solid #ffffff;
+        }
+        nav li:last-child {
+            border-right: none;
+        }
+        nav a {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .container {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        table, th, td {
+            border: 1px solid #333333;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        /* Fixed footer that may overlap content (on purpose) */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #333333;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My Grocery Store</h1>
+        <p>The "freshest" veggies in town – or so we claim!</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Products</a></li>
+            <li><a href="#">Cart</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Featured Products</h2>
+        <!-- Product table hard-coded → no real data binding -->
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price (RM)</th>
+                <th>Stock</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Tomato</td>
+                <td>Fresh red tomatoes</td>
+                <td>3.50</td>
+                <td>100</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Potato</td>
+                <td>Golden potatoes</td>
+                <td>2.00</td>
+                <td>200</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Broccoli</td>
+                <td>Green and healthy</td>
+                <td>4.20</td>
+                <td>50</td>
+            </tr>
+        </table>
+
+        <h3>Add to Cart (does absolutely nothing)</h3>
+        <form>
+            <p>
+                <label>Product ID:
+                    <input type="text" name="product_id" placeholder="e.g. 1" style="width:100px;">
+                </label>
+            </p>
+            <p>
+                <label>Quantity:
+                    <input type="number" name="qty" value="1" style="width:70px;">
+                </label>
+            </p>
+            <button type="button">Add</button> <!-- No JavaScript attached on purpose -->
+        </form>
+    </div>
+
+    <footer>
+        &copy; 2024 Grocery Store. All rights reserved. &bull; This is a legacy demo page.
+    </footer>
+</body>
+</html> 
