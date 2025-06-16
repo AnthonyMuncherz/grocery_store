@@ -33,6 +33,14 @@ if (!$product) {
     echo '</div>';
     return;
 }
+
+// Image preview for current product
+$imgPath = $product['image_url'] ?: 'default.jpg';
+if (!empty($product['image_url']) && str_contains($product['image_url'], '/')) {
+    $imgSrc = $product['image_url'];
+} else {
+    $imgSrc = 'assets/images/products/' . $imgPath;
+}
 ?>
 
 <div class="max-w-6xl mx-auto mt-6 bg-white p-6 rounded-lg shadow-lg">
@@ -117,7 +125,7 @@ if (!$product) {
                 </div>
             </div>
             
-            <form method="POST" action="index.php?module=inventory&action=update_stock" class="space-y-6">
+            <form method="POST" enctype="multipart/form-data" action="index.php?module=inventory&action=update_stock" class="space-y-6">
                 <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                 
                 <div class="bg-white p-4 rounded-lg border">
@@ -160,6 +168,17 @@ if (!$product) {
                               class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
                               rows="4"
                               placeholder="Add a note about this stock adjustment (e.g., 'Received new shipment', 'Damaged goods removed', etc.)"></textarea>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border">
+                    <label class="block text-sm font-bold text-gray-700 mb-3">
+                        <i class="fas fa-image mr-2"></i>Update Product Image:
+                    </label>
+                    <div class="flex items-center space-x-4">
+                        <img id="preview_new_img" src="<?= htmlspecialchars($imgSrc) ?>" class="w-24 h-24 object-cover rounded-lg border" alt="Preview">
+                        <input type="file" name="product_image" accept="image/*" onchange="previewNewImage(event)" class="border p-2 rounded">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF, WebP up to 5MB</p>
                 </div>
 
                 <button type="submit" 
@@ -250,5 +269,15 @@ function updatePreview() {
 function toggleDangerActions() {
     const dangerActions = document.getElementById('danger_actions');
     dangerActions.classList.toggle('hidden');
+}
+
+function previewNewImage(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+     document.getElementById('preview_new_img').src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 </script>

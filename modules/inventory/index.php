@@ -56,21 +56,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'update_stock') {
     $adjustment = intval($_POST['adjustment'] ?? 0);
     $notes = trim($_POST['notes'] ?? '');
     
+    // Handle optional image upload
+    $image_path = null;
+    if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        try {
+            $image_path = uploadProductImage($_FILES['product_image']);
+        } catch (RuntimeException $e) {
+            $_SESSION['error_message'] = 'Image upload failed: ' . $e->getMessage();
+            header("Location: index.php?module=inventory&action=edit&id=$product_id");
+            exit;
+        }
+    }
+    
     $error = null;
     
-    // Validation
+    // Validation: allow zero adjustment if only image update
     if ($product_id <= 0) {
         $error = "Invalid product ID.";
-    } elseif ($adjustment === 0) {
-        $error = "Adjustment quantity cannot be zero.";
-    } else {
-        // Use the existing updateProductStock function
+    } elseif ($adjustment === 0 && !$image_path) {
+        $error = "Adjustment quantity cannot be zero (unless you are only updating the image).";
+    }
+    
+    if ($error) {
+        $_SESSION['error_message'] = $error;
+        header("Location: index.php?module=inventory&action=edit&id=$product_id");
+        exit;
+    }
+    
+    // Perform stock update if adjustment not zero
+    if ($adjustment !== 0) {
         $success = updateProductStock($product_id, $adjustment, $notes);
         if ($success) {
             $_SESSION['success_message'] = "Stock updated successfully! Adjustment: " . ($adjustment > 0 ? "+$adjustment" : "$adjustment") . " units.";
         } else {
             $_SESSION['error_message'] = "Failed to update stock. Please check if the adjustment would result in negative stock.";
         }
+    }
+    
+    // Update image in DB if a new one was uploaded
+    if ($image_path) {
+        $db = getDbConnection();
+        $stmt = $db->prepare("UPDATE products SET image_url = :img, updated_at = datetime('now') WHERE id = :id");
+        $stmt->bindValue(':img', $image_path, SQLITE3_TEXT);
+        $stmt->bindValue(':id', $product_id, SQLITE3_INTEGER);
+        $stmt->execute();
+        $_SESSION['success_message'] = ($_SESSION['success_message'] ?? '') . " Image updated.";
     }
     
     // Redirect back to edit page
