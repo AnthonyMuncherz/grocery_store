@@ -20,8 +20,17 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Product Image -->
             <div class="product-image">
+                <?php
+                    // Determine correct image path (supports stored full path or filename)
+                    $imgPath = $product['image_url'] ?: 'default.jpg';
+                    if (!empty($product['image_url']) && (str_contains($product['image_url'], '/'))) {
+                        $imgSrc = $product['image_url'];
+                    } else {
+                        $imgSrc = 'assets/images/products/' . $imgPath;
+                    }
+                ?>
                 <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <img src="assets/images/products/<?= htmlspecialchars($product['image_url'] ?: 'default.jpg') ?>" 
+                    <img src="<?= htmlspecialchars($imgSrc) ?>" 
                          alt="<?= htmlspecialchars($product['name']) ?>"
                          class="w-full h-96 object-cover">
                 </div>
@@ -164,8 +173,17 @@
                     <?php foreach ($related_products as $related): ?>
                         <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                             <div class="product-image relative">
+                                <?php
+                                    // Build image src for related product
+                                    $relImgPath = $related['image_url'] ?: 'default.jpg';
+                                    if (!empty($related['image_url']) && (str_contains($related['image_url'], '/'))) {
+                                        $relImgSrc = $related['image_url'];
+                                    } else {
+                                        $relImgSrc = 'assets/images/products/' . $relImgPath;
+                                    }
+                                ?>
                                 <a href="index.php?module=products&action=view&id=<?= $related['id'] ?>">
-                                    <img src="assets/images/products/<?= htmlspecialchars($related['image_url'] ?: 'default.jpg') ?>" 
+                                    <img src="<?= htmlspecialchars($relImgSrc) ?>" 
                                          alt="<?= htmlspecialchars($related['name']) ?>"
                                          class="w-full h-32 object-cover">
                                 </a>

@@ -71,8 +71,18 @@
                 <div
                     class="product-card bg-white rounded-lg shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                     <div class="product-image relative">
+                        <?php
+                            // Determine correct image path (supports stored full path or filename)
+                            $imgPath = $product['image_url'] ?: 'default.jpg';
+                            if (!empty($product['image_url']) && (str_contains($product['image_url'], '/'))) {
+                                // Already a relative/absolute path
+                                $imgSrc = $product['image_url'];
+                            } else {
+                                $imgSrc = 'assets/images/products/' . $imgPath;
+                            }
+                        ?>
                         <a href="index.php?module=products&action=view&id=<?= $product['id'] ?>">
-                            <img src="assets/images/products/<?= htmlspecialchars($product['image_url'] ?: 'default.jpg') ?>"
+                            <img src="<?= htmlspecialchars($imgSrc) ?>"
                                 alt="<?= htmlspecialchars($product['name']) ?>" loading="lazy" class="w-full h-48 object-cover">
                         </a>
                         <span class="absolute top-2 right-2 <?= $stock_status_class ?> px-2 py-1 text-xs font-semibold rounded">

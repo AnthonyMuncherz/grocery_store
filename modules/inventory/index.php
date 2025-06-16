@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'add_product') {
     $stock_quantity = intval($_POST['stock_quantity'] ?? 0);
 
     $error = null;
+    $image_path = null;
 
     // Validation
     if (!$name) {
@@ -27,9 +28,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'add_product') {
         $error = "Stock quantity cannot be negative.";
     }
 
+    // Handle image upload if no validation errors so far
+    if (!$error && isset($_FILES['product_image']) && $_FILES['product_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        try {
+            $image_path = uploadProductImage($_FILES['product_image']);
+        } catch (RuntimeException $e) {
+            $error = "Image upload failed: " . $e->getMessage();
+        }
+    }
+
     if (!$error) {
-        // Call addProduct function
-        $success = addProduct($product_id ?: null, $name, $description, $price, $category_id, $stock_quantity);
+        // Call addProduct function with image path
+        $success = addProduct($product_id ?: null, $name, $description, $price, $category_id, $stock_quantity, $image_path);
         if ($success) {
             $_SESSION['success_message'] = "Product added successfully!";
             header("Location: index.php?module=inventory&action=list");

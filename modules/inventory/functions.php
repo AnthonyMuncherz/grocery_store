@@ -184,7 +184,7 @@ function getCategories() {
     return $categories;
 }
 
-function addProduct($product_id, $name, $description, $price, $category_id, $stock_quantity) {
+function addProduct($product_id, $name, $description, $price, $category_id, $stock_quantity, $image_path = null) {
     $db = initializeDatabase();
 
     try {
@@ -216,13 +216,13 @@ function addProduct($product_id, $name, $description, $price, $category_id, $sto
 
         // Insert product
         if ($product_id) {
-            $sql = "INSERT INTO products (id, name, description, price, category_id, stock_quantity, created_at, updated_at) 
-                    VALUES (:id, :name, :description, :price, :category_id, :stock_quantity, datetime('now'), datetime('now'))";
+            $sql = "INSERT INTO products (id, name, description, price, category_id, stock_quantity, image_url, created_at, updated_at) 
+                    VALUES (:id, :name, :description, :price, :category_id, :stock_quantity, :image_url, datetime('now'), datetime('now'))";
             $stmt = $db->prepare($sql);
             $stmt->bindValue(':id', $product_id, SQLITE3_TEXT);
         } else {
-            $sql = "INSERT INTO products (name, description, price, category_id, stock_quantity, created_at, updated_at) 
-                    VALUES (:name, :description, :price, :category_id, :stock_quantity, datetime('now'), datetime('now'))";
+            $sql = "INSERT INTO products (name, description, price, category_id, stock_quantity, image_url, created_at, updated_at) 
+                    VALUES (:name, :description, :price, :category_id, :stock_quantity, :image_url, datetime('now'), datetime('now'))";
             $stmt = $db->prepare($sql);
         }
 
@@ -231,6 +231,7 @@ function addProduct($product_id, $name, $description, $price, $category_id, $sto
         $stmt->bindValue(':price', $price, SQLITE3_FLOAT);
         $stmt->bindValue(':category_id', $category_id, SQLITE3_INTEGER);
         $stmt->bindValue(':stock_quantity', $stock_quantity, SQLITE3_INTEGER);
+        $stmt->bindValue(':image_url', $image_path, SQLITE3_TEXT);
 
         $result = $stmt->execute();
         
@@ -312,4 +313,73 @@ function getInventoryStats() {
     $stats['out_of_stock_count'] = $result->fetchArray(SQLITE3_ASSOC)['out_of_stock'];
     
     return $stats;
+}
+
+// Upload product image and return the file path
+function uploadProductImage($file) {
+    // Create upload directory if it doesn't exist
+    $upload_dir = __DIR__ . '/../../assets/images/products/';
+    if (!file_exists($upload_dir)) {
+        mkdir($upload_dir, 0755, true);
+    }
+
+    // Check if file was uploaded without errors
+    if (!isset($file['error']) || is_array($file['error'])) {
+        throw new RuntimeException('Invalid file upload parameters.');
+    }
+
+    // Check file error codes
+    switch ($file['error']) {
+        case UPLOAD_ERR_OK:
+            break;
+        case UPLOAD_ERR_NO_FILE:
+            return null; // No file uploaded, which is OK
+        case UPLOAD_ERR_INI_SIZE:
+        case UPLOAD_ERR_FORM_SIZE:
+            throw new RuntimeException('File size exceeds limit.');
+        default:
+            throw new RuntimeException('Unknown file upload error.');
+    }
+
+    // Validate file size (max 5MB)
+    if ($file['size'] > 5 * 1024 * 1024) {
+        throw new RuntimeException('File size exceeds 5MB limit.');
+    }
+
+    // Validate file type
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    $file_info = new finfo(FILEINFO_MIME_TYPE);
+    $mime_type = $file_info->file($file['tmp_name']);
+    
+    if (!in_array($mime_type, $allowed_types)) {
+        throw new RuntimeException('Only JPEG, PNG, GIF, and WebP images are allowed.');
+    }
+
+    // Generate unique filename
+    $extension = '';
+    switch ($mime_type) {
+        case 'image/jpeg':
+            $extension = 'jpg';
+            break;
+        case 'image/png':
+            $extension = 'png';
+            break;
+        case 'image/gif':
+            $extension = 'gif';
+            break;
+        case 'image/webp':
+            $extension = 'webp';
+            break;
+    }
+
+    $filename = uniqid('product_', true) . '.' . $extension;
+    $target_path = $upload_dir . $filename;
+
+    // Move uploaded file
+    if (!move_uploaded_file($file['tmp_name'], $target_path)) {
+        throw new RuntimeException('Failed to move uploaded file.');
+    }
+
+    // Return relative path for database storage
+    return 'assets/images/products/' . $filename;
 }
