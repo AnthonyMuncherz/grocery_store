@@ -182,6 +182,7 @@ $inventory_items = getInventoryItems($category_id, $search);
                 <tr>
                     <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Image</th>
                     <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Product</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold uppercase">SKU</th>
                     <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Category</th>
                     <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Stock</th>
                     <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Actions</th>
@@ -190,7 +191,7 @@ $inventory_items = getInventoryItems($category_id, $search);
             <tbody class="divide-y divide-gray-100">
                 <?php if (empty($inventory_items)): ?>
                     <tr>
-                        <td colspan="5" class="text-center text-gray-500 py-6">No inventory items found.</td>
+                        <td colspan="6" class="text-center text-gray-500 py-6">No inventory items found.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($inventory_items as $item): ?>
@@ -207,6 +208,15 @@ $inventory_items = getInventoryItems($category_id, $search);
                                 <?php endif; ?>
                             </td>
                             <td class="px-4 py-3 text-sm text-gray-800 font-medium"><?= htmlspecialchars($item['name']) ?></td>
+                            <td class="px-4 py-3 text-sm">
+                                <?php 
+                                // Generate SKU if not present
+                                $displaySku = !empty($item['sku']) ? $item['sku'] : generateSKU($item['id'], $item['name']);
+                                ?>
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-mono font-semibold">
+                                    <?= htmlspecialchars($displaySku) ?>
+                                </span>
+                            </td>
                             <td class="px-4 py-3 text-sm text-gray-600"><?= htmlspecialchars($item['category_name']) ?></td>
                             <td class="px-4 py-3 text-sm text-gray-800">
                                 <span class="px-2 py-1 rounded-full <?= $item['stock_quantity'] > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
@@ -216,11 +226,11 @@ $inventory_items = getInventoryItems($category_id, $search);
                             <td class="px-4 py-3 text-sm">
                                 <div class="flex gap-3">
                                     <a href="index.php?module=inventory&action=view&id=<?= $item['id'] ?>"
-                                       class="text-theme-red hover:text-red-700">
+                                       class="text-theme-red hover:text-red-700" title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <a href="index.php?module=inventory&action=edit&id=<?= $item['id'] ?>"
-                                       class="text-blue-600 hover:text-blue-700">
+                                       class="text-blue-600 hover:text-blue-700" title="Edit Product">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 </div>

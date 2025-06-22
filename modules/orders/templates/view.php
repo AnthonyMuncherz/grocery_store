@@ -204,7 +204,7 @@
     }
 
     .print-btn:hover {
-        background: #138496;
+        background: #117a8b;
         color: white;
         text-decoration: none;
     }
@@ -218,6 +218,176 @@
         background: #c82333;
         color: white;
         text-decoration: none;
+    }
+
+    /* Delivery Status Styles */
+    .delivery-status-section {
+        margin: 30px 0;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+    }
+
+    .delivery-status-section h3 {
+        color: #2c3e50;
+        margin: 0 0 20px 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        border-bottom: 2px solid #e1e8ed;
+        padding-bottom: 10px;
+    }
+
+    .delivery-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .delivery-current-status {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .delivery-update-form {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .delivery-update-form h4 {
+        color: #2c3e50;
+        margin: 0 0 15px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #34495e;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    }
+
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .update-delivery-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+
+    .update-delivery-btn:hover {
+        background: #218838;
+    }
+
+    .delivery-image-section {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #e1e8ed;
+    }
+
+    .delivery-image-section h4 {
+        color: #2c3e50;
+        margin: 0 0 10px 0;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .delivery-image-container {
+        text-align: center;
+    }
+
+    .delivery-image {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .delivery-image:hover {
+        transform: scale(1.05);
+    }
+
+    .image-caption {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    /* Image Modal Styles */
+    .image-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.8);
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        color: white;
+        font-size: 35px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close-modal:hover {
+        color: #ccc;
     }
 
     @media (max-width: 768px) {
@@ -243,6 +413,11 @@
         
         .actions-section {
             flex-direction: column;
+        }
+        
+        .delivery-info-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
     }
 </style>
@@ -307,6 +482,68 @@
                 <span class="info-value"><?= date('M j, Y g:i A', strtotime($order['updated_at'])) ?></span>
             </div>
             <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Delivery Status Section -->
+    <div class="delivery-status-section">
+        <h3>Delivery Status</h3>
+        <div class="delivery-info-grid">
+            <div class="delivery-current-status">
+                <div class="info-item">
+                    <span class="info-label">Current Status:</span>
+                    <span class="status-badge <?= getDeliveryStatusClass($order['delivery_status'] ?? 'not_shipped') ?>">
+                        <?= htmlspecialchars(getDeliveryStatusOptions()[$order['delivery_status'] ?? 'not_shipped']) ?>
+                    </span>
+                </div>
+                <?php if (!empty($order['delivery_date'])): ?>
+                <div class="info-item">
+                    <span class="info-label">Delivered Date:</span>
+                    <span class="info-value"><?= date('M j, Y g:i A', strtotime($order['delivery_date'])) ?></span>
+                </div>
+                <?php endif; ?>
+                
+                <?php if (!empty($order['delivery_image_url'])): ?>
+                <div class="delivery-image-section">
+                    <h4>Delivery Confirmation Photo</h4>
+                    <div class="delivery-image-container">
+                        <img src="/grocery_store/<?= htmlspecialchars($order['delivery_image_url']) ?>" 
+                             alt="Delivery Confirmation" 
+                             class="delivery-image"
+                             onclick="openImageModal(this.src)">
+                        <p class="image-caption">Click to view full size</p>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+            
+            <div class="delivery-update-form">
+                <h4>Update Delivery Status</h4>
+                <form action="/grocery_store/index.php?module=orders&action=update_delivery" method="POST" enctype="multipart/form-data" class="delivery-form">
+                    <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                    
+                    <div class="form-group">
+                        <label for="delivery_status">Delivery Status:</label>
+                        <select name="delivery_status" id="delivery_status" required class="form-control">
+                            <?php foreach (getDeliveryStatusOptions() as $status => $label): ?>
+                                <option value="<?= $status ?>" <?= ($order['delivery_status'] ?? 'not_shipped') === $status ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($label) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="delivery_image">Delivery Photo (Optional):</label>
+                        <input type="file" name="delivery_image" id="delivery_image" accept="image/*" class="form-control">
+                        <small class="form-text">Upload a photo as delivery confirmation (JPEG, PNG, GIF, WebP - Max 5MB)</small>
+                    </div>
+                    
+                    <button type="submit" class="action-btn update-delivery-btn">
+                        Update Delivery Status
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -377,6 +614,14 @@
         <a href="index.php?module=orders&action=edit&id=<?= $order['id'] ?>" class="action-btn edit-btn">✏️ Edit Order</a>
         <button onclick="printOrder()" class="action-btn print-btn">🖨️ Print Order</button>
         <button onclick="confirmDelete(<?= $order['id'] ?>)" class="action-btn delete-btn">🗑️ Delete Order</button>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" class="image-modal">
+    <span class="close-modal" onclick="closeImageModal()">&times;</span>
+    <div class="modal-content">
+        <img id="modalImage" class="modal-image" src="" alt="Delivery Confirmation">
     </div>
 </div>
 
@@ -521,4 +766,31 @@
     if (printBtn) {
         printBtn.onclick = printOrder;
     }
+
+    function openImageModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        modal.style.display = 'block';
+        modalImg.src = imageSrc;
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        modal.style.display = 'none';
+    }
+
+    // Close modal when clicking outside the image
+    window.onclick = function(event) {
+        const modal = document.getElementById('imageModal');
+        if (event.target === modal) {
+            closeImageModal();
+        }
+    }
+
+    // Close modal with ESC key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeImageModal();
+        }
+    });
 </script> 

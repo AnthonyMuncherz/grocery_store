@@ -325,10 +325,11 @@
                 <tr>
                     <th>Order ID</th>
                     <th>Customer</th>
-                    <th>Total Amount</th>
+                    <th>Total</th>
                     <th>Status</th>
+                    <th>Delivery Status</th>
                     <th>Payment Method</th>
-                    <th>Date Created</th>
+                    <th>Created</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -350,6 +351,11 @@
                         <td>
                             <span class="status-badge status-<?= htmlspecialchars($order['status']) ?>">
                                 <?= ucfirst(htmlspecialchars($order['status'])) ?>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge <?= getDeliveryStatusClass($order['delivery_status'] ?? 'not_shipped') ?>">
+                                <?= htmlspecialchars(getDeliveryStatusOptions()[$order['delivery_status'] ?? 'not_shipped']) ?>
                             </span>
                         </td>
                         <td><?= htmlspecialchars($order['payment_method']) ?></td>

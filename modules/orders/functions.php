@@ -336,4 +336,140 @@ if (!function_exists('getDBConnection')) {
     }
 }
 
+/**
+ * Update delivery status with optional image upload
+ */
+function updateDeliveryStatus($order_id, $delivery_status, $uploaded_file = null) {
+    global $db;
+    
+    $valid_statuses = ['not_shipped', 'in_transit', 'out_for_delivery', 'delivered', 'failed_delivery'];
+    if (!in_array($delivery_status, $valid_statuses)) {
+        throw new Exception("Invalid delivery status");
+    }
+    
+    $db->exec('BEGIN TRANSACTION');
+    
+    try {
+        // Handle image upload if provided
+        $image_url = null;
+        if ($uploaded_file && $uploaded_file['error'] === UPLOAD_ERR_OK) {
+            $image_url = uploadDeliveryImage($uploaded_file);
+        }
+        
+        // Set delivery date if status is delivered
+        $delivery_date = null;
+        if ($delivery_status === 'delivered') {
+            $delivery_date = date('Y-m-d H:i:s');
+        }
+        
+        // Update delivery status
+        $sql = "UPDATE orders SET delivery_status = :delivery_status, updated_at = :updated_at";
+        $params = [
+            ':delivery_status' => $delivery_status,
+            ':updated_at' => date('Y-m-d H:i:s')
+        ];
+        
+        if ($delivery_date) {
+            $sql .= ", delivery_date = :delivery_date";
+            $params[':delivery_date'] = $delivery_date;
+        }
+        
+        if ($image_url) {
+            $sql .= ", delivery_image_url = :delivery_image_url";
+            $params[':delivery_image_url'] = $image_url;
+        }
+        
+        $sql .= " WHERE id = :id";
+        $params[':id'] = (int)$order_id;
+        
+        $stmt = $db->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $result = $stmt->execute();
+        if (!$result) {
+            throw new Exception("Failed to update delivery status");
+        }
+        
+        $db->exec('COMMIT');
+        return true;
+        
+    } catch (Exception $e) {
+        $db->exec('ROLLBACK');
+        throw $e;
+    }
+}
+
+/**
+ * Upload delivery confirmation image
+ */
+function uploadDeliveryImage($file) {
+    // Validate file
+    if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        throw new Exception("Invalid file upload");
+    }
+    
+    // Check file size (max 5MB)
+    if ($file['size'] > 5 * 1024 * 1024) {
+        throw new Exception("File size too large. Maximum 5MB allowed.");
+    }
+    
+    // Check file type
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime_type = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+    
+    if (!in_array($mime_type, $allowed_types)) {
+        throw new Exception("Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.");
+    }
+    
+    // Generate unique filename
+    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = 'delivery_' . uniqid() . '.' . $extension;
+    $upload_path = 'assets/images/delivery/' . $filename;
+    
+    // Create directory if it doesn't exist
+    $upload_dir = dirname($upload_path);
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0755, true);
+    }
+    
+    // Move uploaded file
+    if (!move_uploaded_file($file['tmp_name'], $upload_path)) {
+        throw new Exception("Failed to save uploaded file");
+    }
+    
+    return $upload_path;
+}
+
+/**
+ * Get delivery status options
+ */
+function getDeliveryStatusOptions() {
+    return [
+        'not_shipped' => 'Not Shipped',
+        'in_transit' => 'In Transit',
+        'out_for_delivery' => 'Out for Delivery',
+        'delivered' => 'Delivered',
+        'failed_delivery' => 'Failed Delivery'
+    ];
+}
+
+/**
+ * Get delivery status badge class
+ */
+function getDeliveryStatusClass($status) {
+    $classes = [
+        'not_shipped' => 'status-pending',
+        'in_transit' => 'status-processing',
+        'out_for_delivery' => 'status-shipped',
+        'delivered' => 'status-delivered',
+        'failed_delivery' => 'status-cancelled'
+    ];
+    
+    return $classes[$status] ?? 'status-pending';
+}
+
 

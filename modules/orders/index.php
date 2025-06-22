@@ -172,6 +172,50 @@ switch ($action) {
         exit;
         break;
         
+    case 'update_delivery':
+        $order_id = isset($_POST['order_id']) ? (int)$_POST['order_id'] : 0;
+        $delivery_status = isset($_POST['delivery_status']) ? validateInput($_POST['delivery_status']) : '';
+        
+        if ($order_id <= 0) {
+            $_SESSION['message'] = "Invalid order ID.";
+            $_SESSION['message_type'] = 'error';
+            header('Location: index.php?module=orders&action=list');
+            exit;
+        }
+        
+        try {
+            if (!orderExists($order_id)) {
+                $_SESSION['message'] = "Order not found.";
+                $_SESSION['message_type'] = 'error';
+                header('Location: index.php?module=orders&action=list');
+                exit;
+            }
+            
+            // Handle file upload if provided
+            $uploaded_file = null;
+            if (isset($_FILES['delivery_image']) && $_FILES['delivery_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $uploaded_file = $_FILES['delivery_image'];
+            }
+            
+            $result = updateDeliveryStatus($order_id, $delivery_status, $uploaded_file);
+            
+            if ($result) {
+                $_SESSION['message'] = "Delivery status updated successfully.";
+                $_SESSION['message_type'] = 'success';
+            } else {
+                $_SESSION['message'] = "Failed to update delivery status.";
+                $_SESSION['message_type'] = 'error';
+            }
+            
+        } catch (Exception $e) {
+            $_SESSION['message'] = "Error updating delivery status: " . $e->getMessage();
+            $_SESSION['message_type'] = 'error';
+        }
+        
+        header('Location: index.php?module=orders&action=view&id=' . $order_id);
+        exit;
+        break;
+        
     case 'add':
     default:
         // Default behavior - create order (existing code)

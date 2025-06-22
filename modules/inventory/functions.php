@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../../includes/barcode.php';
 
 function getInventoryLogs(): array {
     $db = initializeDatabase();
@@ -20,7 +21,7 @@ function getInventoryLogs(): array {
 function getProductsWithStock(): array {
     $db = initializeDatabase();
 
-    $sql = "SELECT id, name, price, category_id, stock_quantity 
+    $sql = "SELECT id, name, price, category_id, stock_quantity, sku 
             FROM products 
             WHERE deleted_at IS NULL 
             ORDER BY name ASC";
@@ -28,6 +29,15 @@ function getProductsWithStock(): array {
     $result = $db->query($sql);
     $products = [];
     while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+        // Generate SKU if missing
+        if (empty($row['sku'])) {
+            $sku = generateSKU($row['id'], $row['name']);
+            $updateStmt = $db->prepare("UPDATE products SET sku = :sku WHERE id = :id");
+            $updateStmt->bindValue(':sku', $sku, SQLITE3_TEXT);
+            $updateStmt->bindValue(':id', $row['id'], SQLITE3_INTEGER);
+            $updateStmt->execute();
+            $row['sku'] = $sku;
+        }
         $products[] = $row;
     }
     return $products;
@@ -35,11 +45,7 @@ function getProductsWithStock(): array {
 
 // Fetch a product by ID with current stock info
 function getProductById($id) {
-    $db = initializeDatabase();
-    $stmt = $db->prepare("SELECT * FROM products WHERE id = :id AND deleted_at IS NULL");
-    $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
-    $result = $stmt->execute();
-    return $result->fetchArray(SQLITE3_ASSOC);
+    return getProductWithSKU($id);
 }
 
 // Add stock to a product and record inventory log
@@ -382,4 +388,77 @@ function uploadProductImage($file) {
 
     // Return relative path for database storage
     return 'assets/images/products/' . $filename;
+}
+
+/**
+ * Generate a unique SKU for a product
+ */
+function generateSKU($product_id = null, $name = '') {
+    $db = initializeDatabase();
+    
+    // If product_id is provided, use it to generate SKU
+    if ($product_id) {
+        $sku = 'SKU' . str_pad($product_id, 6, '0', STR_PAD_LEFT);
+    } else {
+        // Generate SKU based on next auto-increment ID
+        $result = $db->query("SELECT seq FROM sqlite_sequence WHERE name='products'");
+        $row = $result->fetchArray(SQLITE3_ASSOC);
+        $next_id = $row ? $row['seq'] + 1 : 1;
+        $sku = 'SKU' . str_pad($next_id, 6, '0', STR_PAD_LEFT);
+    }
+    
+    // Ensure SKU is unique
+    $counter = 0;
+    $original_sku = $sku;
+    while (skuExists($sku)) {
+        $counter++;
+        $sku = $original_sku . '-' . $counter;
+    }
+    
+    return $sku;
+}
+
+/**
+ * Check if SKU already exists
+ */
+function skuExists($sku) {
+    $db = initializeDatabase();
+    $stmt = $db->prepare("SELECT id FROM products WHERE sku = :sku AND deleted_at IS NULL");
+    $stmt->bindValue(':sku', $sku, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    return $result->fetchArray(SQLITE3_ASSOC) !== false;
+}
+
+/**
+ * Get product with SKU by ID
+ */
+function getProductWithSKU($id) {
+    $db = initializeDatabase();
+    $stmt = $db->prepare("SELECT * FROM products WHERE id = :id AND deleted_at IS NULL");
+    $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+    $result = $stmt->execute();
+    $product = $result->fetchArray(SQLITE3_ASSOC);
+    
+    if ($product && empty($product['sku'])) {
+        // Generate SKU if it doesn't exist
+        $sku = generateSKU($product['id'], $product['name']);
+        $updateStmt = $db->prepare("UPDATE products SET sku = :sku WHERE id = :id");
+        $updateStmt->bindValue(':sku', $sku, SQLITE3_TEXT);
+        $updateStmt->bindValue(':id', $product['id'], SQLITE3_INTEGER);
+        $updateStmt->execute();
+        $product['sku'] = $sku;
+    }
+    
+    return $product;
+}
+
+/**
+ * Generate barcode for SKU
+ */
+function generateBarcodeForSKU($sku, $format = 'svg', $width = 200, $height = 50) {
+    if ($format === 'png') {
+        return SimpleBarcodeGenerator::generatePNG($sku, $width, $height);
+    } else {
+        return SimpleBarcodeGenerator::generateSVG($sku, $width, $height);
+    }
 }

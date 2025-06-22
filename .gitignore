@@ -1,1 +1,62 @@
+# Cursor IDE configuration
 .cursor/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Database files (if needed)
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Log files
+logs/*.log
+error.log
+debug.log
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Cache files
+cache/
+*.cache
+
+# Uploaded files (optional - uncomment if needed)
+# assets/images/products/*
+# !assets/images/products/.gitkeep
+
+# Node modules (if using any)
+node_modules/
+
+# Composer vendor (if using composer)
+vendor/
+
+# Config files with sensitive data
+config/local.php
+config/production.php
